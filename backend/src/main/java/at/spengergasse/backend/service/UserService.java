@@ -34,17 +34,6 @@ public class UserService
         }
     }
 
-    public Optional<UserDto> findUserById(Long id)
-    {
-        if (id == null) return Optional.empty();
-
-        try {
-            return Optional.of(UserDto.fromEntity(userRepository.findById(id)));
-        } catch(Exception e) {
-            return Optional.empty();
-        }
-    }
-
     public Optional<UserDto> findUserByUserName(String username)
     {
         if (username == null) return Optional.empty();
