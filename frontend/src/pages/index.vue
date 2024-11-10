@@ -1,7 +1,8 @@
 <template>
-  <HelloWorld />
+  <BenchmarkTest />
 </template>
 
 <script setup>
+
   //
 </script>
