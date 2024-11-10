@@ -39,7 +39,7 @@ public class Itinerary extends AbstractPersistable<Long>
         if (itinerarySteps != null && !itinerarySteps.isEmpty()) itinerarySteps.forEach(this::addItineraryStep);
     }
 
-    protected void setUser(User user)
+    public void setUser(User user)
     {
         if (user == null) return;
         this.user = user;
