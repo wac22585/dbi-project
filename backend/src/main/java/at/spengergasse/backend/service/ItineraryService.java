@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -110,10 +111,15 @@ public class ItineraryService {
     /**
      * Delete an itinerary by its ID
      *
-     * @param id the ID of the itinerary to delete
+     * @param uuid the ID of the itinerary to delete
      */
-    public void deleteItineraryById(Long id) {
-        itineraryRepository.deleteById(id);
+    public boolean deleteItineraryByUUID(UUID uuid) {
+        try {
+            itineraryRepository.deleteByUuid(uuid);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean deleteItinerary(Itinerary itinerary)
