@@ -1,22 +1,23 @@
 package at.spengergasse.backend.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "itineraries")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Itinerary extends AbstractPersistable<Long>
 {
+    @Column(nullable = false, unique = true)
+    private UUID uuid;
     @Column(nullable = false)
     private String name;
     private LocalDateTime startDate;
@@ -28,8 +29,9 @@ public class Itinerary extends AbstractPersistable<Long>
     private List<ItineraryStep> itinerarySteps;
 
     @Builder
-    private Itinerary(String name, LocalDateTime startDate, LocalDateTime endDate, User user, List<ItineraryStep> itinerarySteps)
+    private Itinerary(UUID uuid, String name, LocalDateTime startDate, LocalDateTime endDate, User user, List<ItineraryStep> itinerarySteps)
     {
+        this.uuid = uuid;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -39,7 +41,7 @@ public class Itinerary extends AbstractPersistable<Long>
         if (itinerarySteps != null && !itinerarySteps.isEmpty()) itinerarySteps.forEach(this::addItineraryStep);
     }
 
-    protected void setUser(User user)
+    public void setUser(User user)
     {
         if (user == null) return;
         this.user = user;
@@ -56,5 +58,10 @@ public class Itinerary extends AbstractPersistable<Long>
         if (itineraryStep == null) return;
         this.itinerarySteps.add(itineraryStep);
         if (itineraryStep.getItinerary() != this) itineraryStep.setItinerary(this);
+    }
+
+    public void deleteUser()
+    {
+        this.user = null;
     }
 }

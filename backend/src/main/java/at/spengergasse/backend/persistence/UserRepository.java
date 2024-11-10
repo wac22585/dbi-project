@@ -9,6 +9,6 @@ public interface UserRepository extends Repository<User, Long>
     User findById(Long id);
     User findByUsername(String username);
     void deleteById(Long id);
-
+    void deleteByUsername(String username);
     void deleteAll();
 }

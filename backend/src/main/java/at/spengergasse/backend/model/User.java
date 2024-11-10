@@ -1,17 +1,16 @@
 package at.spengergasse.backend.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AbstractPersistable<Long>
@@ -42,10 +41,27 @@ public class User extends AbstractPersistable<Long>
         return this.itineraries.contains(itinerary);
     }
 
-    protected void addItinerary(Itinerary itinerary)
+    public void addItinerary(Itinerary itinerary)
     {
         if (itinerary == null) return;
         this.itineraries.add(itinerary);
         if (itinerary.getUser() != this) itinerary.setUser(this);
+    }
+
+    public boolean containsItineraryId(Long id)
+    {
+        return this.itineraries.stream().anyMatch(itinerary -> Objects.equals(itinerary.getId(), id));
+    }
+
+    public void removeItinerary(Itinerary itinerary)
+    {
+        if (itinerary == null) return;
+        this.itineraries.remove(itinerary);
+        if (itinerary.getUser() == this) itinerary.setUser(null);
+    }
+
+    public void setId(Long id)
+    {
+        super.setId(id);
     }
 }

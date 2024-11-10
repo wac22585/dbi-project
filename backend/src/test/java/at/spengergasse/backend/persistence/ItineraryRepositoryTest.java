@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -24,6 +25,7 @@ class ItineraryRepositoryTest
     void setUp()
     {
         itinerary = Itinerary.builder()
+                .uuid(UUID.randomUUID())
                 .name("Test Itinerary")
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusDays(7))
