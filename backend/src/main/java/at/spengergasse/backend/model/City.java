@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,8 +32,10 @@ public class City extends AbstractPersistable<Long>
         this.city = city;
         this.country = country;
 
-        this.routeStopsCurrent = routeStopsCurrent;
-        this.routeStopsNext = routeStopsNext;
+        this.routeStopsCurrent = new ArrayList<>();
+        if (routeStopsCurrent != null && !routeStopsCurrent.isEmpty()) routeStopsCurrent.forEach(this::addRouteStopCurrent);
+        this.routeStopsNext = new ArrayList<>();
+        if (routeStopsNext != null && !routeStopsNext.isEmpty()) routeStopsNext.forEach(this::addRouteStopNext);
     }
 
     protected boolean containsCurrentRouteStop(RouteStop routeStop)
