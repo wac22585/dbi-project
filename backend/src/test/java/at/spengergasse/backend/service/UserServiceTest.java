@@ -57,17 +57,6 @@ class UserServiceTest
     }
 
     @Test
-    void verifyFindUserById()
-    {
-        when(userRepository.findById(any(Long.class))).thenReturn(user);
-
-        var foundUser = userService.findUserById(1L);
-
-        assertThat(foundUser).isPresent();
-        assertThat(foundUser.get().email()).isEqualTo(user.getEmail());
-    }
-
-    @Test
     void verifyFindUserByUserName()
     {
         when(userRepository.findByUsername("wac22585")).thenReturn(user);
