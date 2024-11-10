@@ -40,37 +40,6 @@ public class ItineraryService {
         }
     }
 
-    /**
-     * Create a new itinerary with the given details.
-     *
-     * @param name           the name of the itinerary
-     * @param startDate      the start date of the itinerary
-     * @param endDate        the end date of the itinerary
-     * @param user           the user associated with the itinerary
-     * @param itinerarySteps the list of itinerary steps
-     * @return the created itinerary
-     */
-    public Optional<ItineraryDto> createItinerary(String name, LocalDateTime startDate, LocalDateTime endDate, User user, List<ItineraryStep> itinerarySteps) {
-        //Check for invalid properties
-        if (endDate.isBefore(startDate)) return Optional.empty();
-
-        if (user == null || user.getId() == null) return Optional.empty();
-
-        try {
-            Itinerary itinerary = Itinerary.builder()
-                    .name(name)
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .user(user)
-                    .itinerarySteps(itinerarySteps)
-                    .build();
-
-            return Optional.of(ItineraryDto.fromEntity(itineraryRepository.save(itinerary)));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
     public Optional<ItineraryDto> updateItinerary(ItineraryDto itinerary)
     {
         //Check for invalid properties
