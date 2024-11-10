@@ -1,0 +1,51 @@
+@startuml
+entity "User" {
+  * user_id : Long <<PK>>
+  --
+  * username : String
+  * email : String
+  * password : String
+}
+
+entity "City" {
+  * city_id : Long <<PK>>
+  --
+  * city : String
+  * country : String
+}
+
+entity "Route_Stop" {
+  * route_stop_id : Long <<PK>>
+  --
+  * city_id : Long <<FK>>
+  * next_city : Long <<FK>>
+  * arrival_time : Datetime
+  * departure_time : Datetime
+  * total_distance : float
+}
+
+entity "Itinerary" {
+  * itinerary_id : Long <<PK>>
+  --
+  * user_id : Long <<FK>>
+  * name : String
+  * start_date : Datetime
+  * end_date : Datetime
+}
+
+entity "Itinerary_Step" {
+  * itinerary_step_id : Long <<PK>>
+  --
+  * itinerary_id : Long <<FK>>
+  * name : String
+  * step_date : Datetime
+  * route_stop_id : Long <<FK>>
+}
+
+User "1" -- "0..*" Itinerary : "plans"
+Itinerary "1" -- "1..*" Itinerary_Step : "has steps"
+Itinerary_Step "1" -- "1..*" Route_Stop : "visits"
+
+Route_Stop "*" -- "1" City : "at"
+Route_Stop "*" -- "1" City : "next stop"
+@enduml
