@@ -87,20 +87,27 @@ class ItineraryRepositoryTest
         Itinerary itinerary = this.itinerary;
         itinerary = itineraryRepository.save(itinerary);
 
-        assertThat(itineraryRepository.findById(itinerary.getId())).isNotNull();
+        assertThat(itineraryRepository.findByUuid(itinerary.getUuid())).isNotNull();
     }
 
+    /**
+     * expected: null
+     *  but was: Entity of type at.spengergasse.backend.model.Itinerary with id: 102
+     * Expected :null
+     * Actual   :Entity of type at.spengergasse.backend.model.Itinerary with id: 102
+     * //TODO: Fix this test 110
+     */
     @Test
     void verifyDeleteById()
     {
         Itinerary itinerary = this.itinerary;
         itinerary = itineraryRepository.save(itinerary);
 
-        assertThat(itineraryRepository.findById(itinerary.getId())).isNotNull();
+        assertThat(itineraryRepository.findByUuid(itinerary.getUuid())).isNotNull();
 
-        itineraryRepository.deleteById(itinerary.getId());
+        itineraryRepository.deleteByUuid(itinerary.getUuid());
 
-        assertThat(itineraryRepository.findById(itinerary.getId())).isNull();
+        assertThat(itineraryRepository.findByUuid(itinerary.getUuid())).isNull();
     }
 
     @Test
@@ -127,7 +134,7 @@ class ItineraryRepositoryTest
         Itinerary itinerary = this.itinerary;
         itinerary = itineraryRepository.save(itinerary);
 
-        Itinerary found = itineraryRepository.findById(itinerary.getId());
+        Itinerary found = itineraryRepository.findByUuid(itinerary.getUuid());
 
         assertThat(found.getItinerarySteps().size()).isNotZero();
         assertThat(found.getItinerarySteps().getFirst().getRouteStops().getFirst().getId()).isNotNull();
