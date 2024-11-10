@@ -25,17 +25,16 @@ public class ItineraryService {
     /**
      * Create an itinerary
      *
-     * @param itinerary the itinerary to save or update
+     * @param itinerary the itinerary to save
      * @return the saved itinerary
      */
-    public Optional<ItineraryDto> saveItinerary(ItineraryDto itinerary)
-    {
+    public Optional<ItineraryDto> saveItinerary(ItineraryDto itinerary) {
         if (itinerary == null) return Optional.empty();
 
         try {
             Itinerary save = ItineraryDto.toEntity(itinerary);
             return Optional.of(ItineraryDto.fromEntity(itineraryRepository.save(save)));
-        } catch(Exception e) {
+        } catch (Exception e) {
             return Optional.empty();
         }
     }
@@ -50,10 +49,9 @@ public class ItineraryService {
      * @param itinerarySteps the list of itinerary steps
      * @return the created itinerary
      */
-    public Optional<ItineraryDto> createItinerary(String name, LocalDateTime startDate, LocalDateTime endDate, User user, List<ItineraryStep> itinerarySteps)
-    {
+    public Optional<ItineraryDto> createItinerary(String name, LocalDateTime startDate, LocalDateTime endDate, User user, List<ItineraryStep> itinerarySteps) {
         //Check for invalid properties
-        if(endDate.isBefore(startDate)) return Optional.empty();
+        if (endDate.isBefore(startDate)) return Optional.empty();
 
         if (user == null || user.getId() == null) return Optional.empty();
 
@@ -67,12 +65,46 @@ public class ItineraryService {
                     .build();
 
             return Optional.of(ItineraryDto.fromEntity(itineraryRepository.save(itinerary)));
-        } catch(Exception e) {
+        } catch (Exception e) {
             return Optional.empty();
         }
     }
 
-    public Optional<Itinerary> updateItinerary(Itinerary itinerary) {return Optional.empty();}
+    public Optional<ItineraryDto> updateItinerary(ItineraryDto itinerary)
+    {
+        //Check for invalid properties
+        if (itinerary == null) return Optional.empty();
+
+        Itinerary update = ItineraryDto.toEntity(itinerary);
+
+        if (update.getName().isEmpty()
+                || update.getStartDate() == null
+                || update.getEndDate() == null) return Optional.empty();
+
+        if (update.getName().isBlank()
+                || update.getStartDate().isAfter(update.getEndDate())) return Optional.empty();
+
+        try {
+            Itinerary updated = itineraryRepository.findById(update.getId());
+            if (updated == null) return Optional.empty();
+
+            updated.setName(update.getName());
+            updated.setStartDate(update.getStartDate());
+            updated.setEndDate(update.getEndDate());
+            updated.setItinerarySteps(update.getItinerarySteps());
+
+            if (updated.getUser() != update.getUser())
+            {
+                updated.getUser().removeItinerary(updated);
+                updated.setUser(update.getUser());
+            }
+
+
+            return Optional.of(ItineraryDto.fromEntity(itineraryRepository.save(updated)));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 
 
     /**
@@ -80,10 +112,23 @@ public class ItineraryService {
      *
      * @param id the ID of the itinerary to delete
      */
-    public void deleteItineraryById(Long id)
-    {
+    public void deleteItineraryById(Long id) {
         itineraryRepository.deleteById(id);
     }
+
+    public boolean deleteItinerary(Itinerary itinerary)
+    {
+        if (itinerary == null || itinerary.getId() == null) return false;
+
+        try {
+            itinerary.getUser().removeItinerary(itinerary);
+            itineraryRepository.deleteById(itinerary.getId());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     /**
      * Retrieve an itinerary by its ID
@@ -91,23 +136,22 @@ public class ItineraryService {
      * @param id the ID of the itinerary
      * @return an Optional containing the found itinerary, or empty if not found
      */
-    public Optional<ItineraryDto> getItineraryById(Long id)
-    {
+    public Optional<ItineraryDto> findItineraryById(Long id) {
         if (id == null) return Optional.empty();
 
         try {
             return Optional.of(ItineraryDto.fromEntity(itineraryRepository.findById(id)));
-        } catch(Exception e) {
+        } catch (Exception e) {
             return Optional.empty();
-        }    }
+        }
+    }
 
     /**
      * Retrieve all itineraries
      *
      * @return a list of all itineraries
      */
-    public List<Itinerary> getAllItineraries()
-    {
+    public List<Itinerary> getAllItineraries() {
         return itineraryRepository.findAll();
     }
 
@@ -125,25 +169,18 @@ public class ItineraryService {
      * Update the user associated with an itinerary
      *
      * @param itineraryId the ID of the itinerary
-     * @param user the user to associate with the itinerary
+     * @param user        the user to associate with the itinerary
      * @return an Optional containing the updated itinerary, or empty if not found
      */
-    public Optional<Itinerary> updateItineraryUser(Long itineraryId, User user) {
-        /*Optional<ItineraryDto> optionalItinerary = getItineraryById(itineraryId);
-        optionalItinerary.ifPresent(itinerary -> itinerary.setUser(user));
-        return optionalItinerary;*/
-        return null;
+    public Optional<ItineraryDto> updateItineraryUser(Long itineraryId, User user) {
+        Optional<ItineraryDto> optionalItinerary = findItineraryById(itineraryId);
+        if (optionalItinerary.isPresent()) {
+            Itinerary itinerary = ItineraryDto.toEntity(optionalItinerary.get());
+            itinerary.setUser(user);
+            Itinerary updatedItinerary = itineraryRepository.save(itinerary);
+            return Optional.of(ItineraryDto.fromEntity(updatedItinerary));
+        }
+        return Optional.empty();
     }
-
-
-
-    /*Itinerary save(Itinerary itinerary);
-    Itinerary findById(Long id);
-    void deleteById(Long id);
-
-    List<Itinerary> findAllByUserId(Long userId);
-    List<Itinerary> findAll();*/
-
-
 }
 

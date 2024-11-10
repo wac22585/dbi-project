@@ -1,10 +1,7 @@
 package at.spengergasse.backend.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.time.LocalDateTime;
@@ -14,6 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "itineraries")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Itinerary extends AbstractPersistable<Long>
