@@ -7,7 +7,7 @@ public interface CityRepository extends Repository<City, Long>
 {
     City save(City city);
     City findById(Long id);
-    City findByName(String name);
+    City findByCity(String city);
     void deleteById(Long id);
 
     void deleteAll();

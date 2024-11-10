@@ -13,5 +13,5 @@ public interface RouteStopRepository extends Repository<RouteStop, Long>
     void deleteAll();
 
     List<RouteStop> findByItineraryStepId(Long id);
-    List<RouteStop> findALl();
+    List<RouteStop> findAll();
 }
