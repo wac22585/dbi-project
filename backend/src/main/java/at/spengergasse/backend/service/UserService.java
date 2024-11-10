@@ -1,6 +1,7 @@
 package at.spengergasse.backend.service;
 
 import at.spengergasse.backend.dto.UserDto;
+import at.spengergasse.backend.model.Itinerary;
 import at.spengergasse.backend.model.User;
 import at.spengergasse.backend.persistence.ItineraryRepository;
 import at.spengergasse.backend.persistence.UserRepository;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,7 +56,7 @@ public class UserService
         }
     }
 
-    public Optional<UserDto> updateUser(UserDto userDto)
+    public Optional<UserDto> updateUserInformation(UserDto userDto)
     {
         //check for invalid properties
         if (userDto == null) return Optional.empty();
@@ -69,7 +72,7 @@ public class UserService
                 || user.getEmail().isBlank()) return Optional.empty();
 
         try {
-            User update = userRepository.findById(user.getId());
+            User update = userRepository.findByUsername(user.getUsername());
             if (update == null) return Optional.empty();
 
             update.setEmail(user.getEmail());
@@ -78,30 +81,56 @@ public class UserService
 
             if (update.getItineraries() != user.getItineraries())
             {
-                update.getItineraries().forEach(itinerary -> {
-                    itinerary.setUser(null);
-                    itineraryRepository.deleteById(itinerary.getId());
-                });
-                user.getItineraries().forEach(update::addItinerary);
+                List<Itinerary> deletes = new ArrayList<>();
+                if (update.getItineraries() != null)
+                {
+                    update.getItineraries().forEach(itinerary -> {
+                        itinerary.deleteUser();
+                        deletes.add(itinerary);
+                        itineraryRepository.deleteByUuid(itinerary.getUuid());
+                    });
+                }
+
+                deletes.forEach(update::removeItinerary);
+
+                if(user.getItineraries() != null)
+                {
+                    user.getItineraries().forEach(update::addItinerary);
+                }
             }
 
             userRepository.save(update);
             return Optional.of(UserDto.fromEntity(update));
 
         } catch(Exception e) {
-            return Optional.empty(); //no update possible
+            return Optional.empty();
         }
     }
 
-    public boolean deleteUser(User user)
+    public Optional<UserDto> updateUserName(String username, String newUsername)
     {
-        if (user == null || user.getId() == null) return false;
+        if (username == null || newUsername == null) return Optional.empty();
 
         try {
-            user.getItineraries().forEach(itinerary -> {
-                itinerary.setUser(null);
-            });
-            userRepository.deleteById(user.getId());
+            User user = userRepository.findByUsername(username);
+            if (user == null) return Optional.empty();
+
+            user.setUsername(newUsername);
+            userRepository.save(user);
+            return Optional.of(UserDto.fromEntity(user));
+        } catch(Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public boolean deleteUser(UserDto userDto)
+    {
+        if (userDto == null) return false;
+
+        try {
+            User user = UserDto.toEntity(userDto);
+            user.getItineraries().forEach(Itinerary::deleteUser);
+            userRepository.deleteByUsername(user.getUsername());
             return true;
         } catch(Exception e) {
             return false;

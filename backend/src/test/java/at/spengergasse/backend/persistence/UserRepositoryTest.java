@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -30,6 +31,7 @@ class UserRepositoryTest
                 .password("password")
                 .itineraries(List.of(
                         Itinerary.builder()
+                                .uuid(UUID.randomUUID())
                                 .name("Itinerary 1")
                                 .startDate(LocalDateTime.now())
                                 .endDate(null)

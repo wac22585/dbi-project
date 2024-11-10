@@ -5,8 +5,10 @@ import at.spengergasse.backend.model.Itinerary;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public record ItineraryDto(
+        UUID uuid,
         String name,
         LocalDateTime startDate,
         LocalDateTime endDate,
@@ -16,6 +18,7 @@ public record ItineraryDto(
     //This method is used to convert an entity to a dto for the service layer
     public static ItineraryDto fromEntity(Itinerary itinerary) {
         ItineraryDto itineraryDto = new ItineraryDto(
+                itinerary.getUuid(),
                 itinerary.getName(),
                 itinerary.getStartDate(),
                 itinerary.getEndDate(),
@@ -32,6 +35,7 @@ public record ItineraryDto(
 
     public static Itinerary toEntity(ItineraryDto itineraryDto) {
         Itinerary itinerary =  Itinerary.builder()
+                .uuid(itineraryDto.uuid)
                 .name(itineraryDto.name)
                 .startDate(itineraryDto.startDate)
                 .endDate(itineraryDto.endDate)
