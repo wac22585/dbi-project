@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/delete", produces = "application/json")
-    public ResponseEntity<UserDto> deleteUser(@RequestParam UserDto user) {
+    public ResponseEntity<UserDto> deleteUser(@RequestBody UserDto user) {
         boolean deleted = userService.deleteUser(user);
         return deleted ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
