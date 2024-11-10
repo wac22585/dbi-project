@@ -53,7 +53,7 @@ public class Itinerary extends AbstractPersistable<Long>
         return this.itinerarySteps.contains(itineraryStep);
     }
 
-    protected void addItineraryStep(ItineraryStep itineraryStep)
+    public void addItineraryStep(ItineraryStep itineraryStep)
     {
         if (itineraryStep == null) return;
         this.itinerarySteps.add(itineraryStep);

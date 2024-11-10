@@ -55,7 +55,7 @@ public class ItineraryService {
                 || update.getStartDate().isAfter(update.getEndDate())) return Optional.empty();
 
         try {
-            Itinerary updated = itineraryRepository.findById(update.getId());
+            Itinerary updated = itineraryRepository.findByUuid(update.getUuid());
             if (updated == null) return Optional.empty();
 
             updated.setName(update.getName());
@@ -93,7 +93,7 @@ public class ItineraryService {
 
     public boolean deleteItinerary(Itinerary itinerary)
     {
-        if (itinerary == null || itinerary.getId() == null) return false;
+        if (itinerary == null || itinerary.getUuid() == null) return false;
 
         try {
             itinerary.getUser().removeItinerary(itinerary);
@@ -108,14 +108,14 @@ public class ItineraryService {
     /**
      * Retrieve an itinerary by its ID
      *
-     * @param id the ID of the itinerary
+     * @param id the UUID of the itinerary
      * @return an Optional containing the found itinerary, or empty if not found
      */
-    public Optional<ItineraryDto> findItineraryById(Long id) {
+    public Optional<ItineraryDto> findItineraryUUID(UUID id) {
         if (id == null) return Optional.empty();
 
         try {
-            return Optional.of(ItineraryDto.fromEntity(itineraryRepository.findById(id)));
+            return Optional.of(ItineraryDto.fromEntity(itineraryRepository.findByUuid(id)));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -143,12 +143,12 @@ public class ItineraryService {
     /**
      * Update the user associated with an itinerary
      *
-     * @param itineraryId the ID of the itinerary
+     * @param itineraryId the UUID of the itinerary
      * @param user        the user to associate with the itinerary
      * @return an Optional containing the updated itinerary, or empty if not found
      */
-    public Optional<ItineraryDto> updateItineraryUser(Long itineraryId, User user) {
-        Optional<ItineraryDto> optionalItinerary = findItineraryById(itineraryId);
+    public Optional<ItineraryDto> updateItineraryUser(UUID itineraryId, User user) {
+        Optional<ItineraryDto> optionalItinerary = findItineraryUUID(itineraryId);
         if (optionalItinerary.isPresent()) {
             Itinerary itinerary = ItineraryDto.toEntity(optionalItinerary.get());
             itinerary.setUser(user);
