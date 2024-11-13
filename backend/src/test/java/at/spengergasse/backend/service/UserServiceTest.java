@@ -2,7 +2,7 @@ package at.spengergasse.backend.service;
 
 import at.spengergasse.backend.dto.ItineraryDto;
 import at.spengergasse.backend.dto.UserDto;
-import at.spengergasse.backend.model.User;
+import at.spengergasse.backend.model.relational.User;
 import at.spengergasse.backend.persistence.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;

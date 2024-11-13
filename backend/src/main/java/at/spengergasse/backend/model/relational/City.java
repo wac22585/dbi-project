@@ -1,4 +1,4 @@
-package at.spengergasse.backend.model;
+package at.spengergasse.backend.model.relational;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

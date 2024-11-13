@@ -1,6 +1,6 @@
 package at.spengergasse.backend.dto;
 
-import at.spengergasse.backend.model.RouteStop;
+import at.spengergasse.backend.model.relational.RouteStop;
 
 import java.time.LocalDateTime;
 

@@ -1,6 +1,6 @@
 package at.spengergasse.backend.persistence;
 
-import at.spengergasse.backend.model.City;
+import at.spengergasse.backend.model.relational.City;
 import org.springframework.data.repository.Repository;
 
 public interface CityRepository extends Repository<City, Long>

@@ -1,7 +1,7 @@
 package at.spengergasse.backend.persistence;
 
-import at.spengergasse.backend.model.Itinerary;
-import at.spengergasse.backend.model.User;
+import at.spengergasse.backend.model.relational.Itinerary;
+import at.spengergasse.backend.model.relational.User;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

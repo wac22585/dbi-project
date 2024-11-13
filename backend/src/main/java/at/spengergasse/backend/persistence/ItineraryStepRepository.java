@@ -1,6 +1,6 @@
 package at.spengergasse.backend.persistence;
 
-import at.spengergasse.backend.model.ItineraryStep;
+import at.spengergasse.backend.model.relational.ItineraryStep;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;

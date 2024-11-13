@@ -1,6 +1,6 @@
 package at.spengergasse.backend.dto;
 
-import at.spengergasse.backend.model.ItineraryStep;
+import at.spengergasse.backend.model.relational.ItineraryStep;
 
 import java.time.LocalDateTime;
 import java.util.List;

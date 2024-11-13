@@ -1,17 +1,14 @@
 package at.spengergasse.backend.service;
 
 import at.spengergasse.backend.dto.ItineraryDto;
-import at.spengergasse.backend.dto.UserDto;
-import at.spengergasse.backend.model.Itinerary;
-import at.spengergasse.backend.model.ItineraryStep;
-import at.spengergasse.backend.model.User;
+import at.spengergasse.backend.model.relational.Itinerary;
+import at.spengergasse.backend.model.relational.User;
 import at.spengergasse.backend.persistence.ItineraryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

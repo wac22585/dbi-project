@@ -1,6 +1,6 @@
 package at.spengergasse.backend.dto;
 
-import at.spengergasse.backend.model.User;
+import at.spengergasse.backend.model.relational.User;
 
 import java.util.List;
 

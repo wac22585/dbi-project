@@ -1,6 +1,6 @@
 package at.spengergasse.backend.persistence;
 
-import at.spengergasse.backend.model.RouteStop;
+import at.spengergasse.backend.model.relational.RouteStop;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;

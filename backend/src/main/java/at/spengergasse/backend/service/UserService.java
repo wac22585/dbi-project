@@ -1,8 +1,8 @@
 package at.spengergasse.backend.service;
 
 import at.spengergasse.backend.dto.UserDto;
-import at.spengergasse.backend.model.Itinerary;
-import at.spengergasse.backend.model.User;
+import at.spengergasse.backend.model.relational.Itinerary;
+import at.spengergasse.backend.model.relational.User;
 import at.spengergasse.backend.persistence.ItineraryRepository;
 import at.spengergasse.backend.persistence.UserRepository;
 import jakarta.transaction.Transactional;

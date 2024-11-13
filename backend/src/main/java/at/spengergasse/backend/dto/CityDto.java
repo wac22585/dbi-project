@@ -1,6 +1,6 @@
 package at.spengergasse.backend.dto;
 
-import at.spengergasse.backend.model.City;
+import at.spengergasse.backend.model.relational.City;
 
 public record CityDto(
         String city,

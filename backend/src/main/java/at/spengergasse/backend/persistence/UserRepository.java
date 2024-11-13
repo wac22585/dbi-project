@@ -1,6 +1,6 @@
 package at.spengergasse.backend.persistence;
 
-import at.spengergasse.backend.model.User;
+import at.spengergasse.backend.model.relational.User;
 import org.springframework.data.repository.Repository;
 
 public interface UserRepository extends Repository<User, Long>

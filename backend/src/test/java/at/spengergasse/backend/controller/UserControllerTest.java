@@ -2,9 +2,7 @@ package at.spengergasse.backend.controller;
 
 import at.spengergasse.backend.dto.ItineraryDto;
 import at.spengergasse.backend.dto.UserDto;
-import at.spengergasse.backend.model.User;
 import at.spengergasse.backend.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

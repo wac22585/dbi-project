@@ -2,14 +2,13 @@ package at.spengergasse.backend.service;
 
 import at.spengergasse.backend.dto.ItineraryDto;
 import at.spengergasse.backend.dto.ItineraryStepDto;
-import at.spengergasse.backend.model.Itinerary;
-import at.spengergasse.backend.model.ItineraryStep;
-import at.spengergasse.backend.model.User;
+import at.spengergasse.backend.model.relational.Itinerary;
+import at.spengergasse.backend.model.relational.ItineraryStep;
+import at.spengergasse.backend.model.relational.User;
 import at.spengergasse.backend.persistence.ItineraryRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
