@@ -56,6 +56,15 @@ public class Itinerary extends AbstractPersistable<Long>
     public void addItineraryStep(ItineraryStep itineraryStep)
     {
         if (itineraryStep == null) return;
+
+//        if (!this.itinerarySteps.isEmpty()) {
+//            ItineraryStep lastStep = this.itinerarySteps.getLast();
+//            if (!lastStep.getRouteStops().isEmpty()) {
+//                RouteStop lastRouteStop = lastStep.getRouteStops().getLast();
+//                itineraryStep.getRouteStops().forEach(routeStop -> routeStop.setCurrentCity(lastRouteStop.getNextCity()));
+//            }
+//        }
+
         this.itinerarySteps.add(itineraryStep);
         if (itineraryStep.getItinerary() != this) itineraryStep.setItinerary(this);
     }

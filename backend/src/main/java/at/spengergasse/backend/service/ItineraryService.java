@@ -133,11 +133,11 @@ public class ItineraryService {
     /**
      * Retrieve all itineraries for a specific user by user ID
      *
-     * @param userId the ID of the user
+     * @param user the user to retrieve itineraries for
      * @return a list of itineraries associated with the user
      */
-    public List<Itinerary> getItinerariesByUserId(Long userId) {
-        return itineraryRepository.findAllByUserId(userId);
+    public List<Itinerary> getItinerariesByUser(User user) {
+        return itineraryRepository.findAllByUser(user);
     }
 
     /**

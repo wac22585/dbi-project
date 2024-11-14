@@ -116,7 +116,7 @@ class ItineraryRepositoryTest
         Itinerary itinerary = this.itinerary;
         itinerary = itineraryRepository.save(itinerary);
 
-        assertThat(itineraryRepository.findAllByUserId(itinerary.getUser().getId())).isNotNull();
+        assertThat(itineraryRepository.findAllByUser(itinerary.getUser())).isNotNull();
     }
 
     @Test

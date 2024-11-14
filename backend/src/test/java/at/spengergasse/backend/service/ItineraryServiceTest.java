@@ -2,10 +2,9 @@ package at.spengergasse.backend.service;
 
 import at.spengergasse.backend.dto.ItineraryDto;
 import at.spengergasse.backend.dto.ItineraryStepDto;
-import at.spengergasse.backend.model.Itinerary;
-import at.spengergasse.backend.model.ItineraryStep;
-import at.spengergasse.backend.model.User;
+import at.spengergasse.backend.model.*;
 import at.spengergasse.backend.persistence.ItineraryRepository;
+import at.spengergasse.backend.persistence.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +35,8 @@ class ItineraryServiceTest
     private Itinerary itinerary;
     private UUID itineraryId;
     private User user;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setup()
@@ -43,30 +44,55 @@ class ItineraryServiceTest
         itineraryId = UUID.randomUUID();
 
         user = User.builder()
-                .username("testUser")
-                .email("test@example.com")
+                .username("jxh17")
+                .password("password")
+                .email("vil22528@spengergasse.at")
                 .build();
 
-        itineraryDto = new ItineraryDto(
-                itineraryId,
-            "10 day Scandinavia Itinerary",
-            LocalDateTime.of(2022, 12, 10, 5, 30),
-            LocalDateTime.of(2022, 12, 20, 20, 30),
-            List.of(new ItineraryStepDto("Day 1 - Visit the Viking Ship Museum", LocalDateTime.of(2022, 12, 10, 5, 30), List.of()),
-                new ItineraryStepDto("Day 2 - Explore the Old Town", LocalDateTime.of(2022, 12, 11, 5, 30), List.of()),
-                new ItineraryStepDto("Day 3 - Visit the Little Mermaid", LocalDateTime.of(2022, 12, 12, 5, 30), List.of()),
-                new ItineraryStepDto("Day 4 - Visit the Old Town", LocalDateTime.of(2022, 12, 13, 5, 30), List.of()),
-                new ItineraryStepDto("Day 5 - Visit the Old Town", LocalDateTime.of(2022, 12, 14, 5, 30), List.of()),
-                new ItineraryStepDto("Day 6 - Visit the Old Town",  LocalDateTime.of(2022, 12, 15, 5, 30), List.of()),
-                new ItineraryStepDto("Day 7 - Visit the Old Town", LocalDateTime.of(2022, 12, 16, 5, 30), List.of()),
-                new ItineraryStepDto("Day 8 Visit the Old Town", LocalDateTime.of(2022, 12, 17, 5, 30), List.of()),
-                new ItineraryStepDto("Day 9 - Visit the Old Town", LocalDateTime.of(2022, 12, 18, 5, 30), List.of()),
-                new ItineraryStepDto("Day 10 - Visit the Old Town", LocalDateTime.of(2022, 12, 19, 5, 30), List.of())
-            ));
-        itinerary = ItineraryDto.toEntity(itineraryDto);
-        itinerary.setUser(user);
-        itineraryDto = ItineraryDto.fromEntity(itinerary);
+        itinerary = Itinerary.builder()
+                .uuid(itineraryId)
+                .name("10 day Scandinavia Itinerary")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(7))
+                .user(user)
+                .itinerarySteps(List.of(
+                        ItineraryStep.builder()
+                                .name("Day 1 - Visit the Viking Ship Museum")
+                                .stepDate(LocalDateTime.now())
+                                .routeStops(List.of(
+                                        RouteStop.builder()
+                                                .currentCity(City.builder()
+                                                        .city("Stockholm")
+                                                        .country("Sweden")
+                                                        .build())
+                                                .nextCity(City.builder()
+                                                        .city("Copenhagen")
+                                                        .country("Denmark")
+                                                        .build())
+                                                .build()
+                                ))
+                                .build(),
+                        ItineraryStep.builder()
+                                .name("Day 2 - Explore the Old Town")
+                                .stepDate(LocalDateTime.now().plusDays(3))
+                                .routeStops(List.of(
+                                        RouteStop.builder()
+                                                .currentCity(City.builder()
+                                                        .city("Copenhagen")
+                                                        .country("Denmark")
+                                                        .build())
+                                                .nextCity(City.builder()
+                                                        .city("Oslo")
+                                                        .country("Norway")
+                                                        .build())
+                                                .build()
+                                ))
+                                .build()
+                ))
+                .build();
 
+
+        itineraryDto = ItineraryDto.fromEntity(itinerary);
     }
 
     @Test
@@ -142,18 +168,17 @@ class ItineraryServiceTest
         assertThat(itineraries.get(0).getName()).isEqualTo(itinerary.getName());
     }
 
-    //FIXME: Index out of Bounds
     @Test
     void verifyGetItinerariesByUserId() {
-        when(itineraryRepository.findAllByUserId(any(Long.class))).thenReturn(List.of(itinerary));
+        when(itineraryRepository.findAllByUser(any(User.class))).thenReturn(List.of(itinerary));
 
-        var itineraries = itineraryService.getItinerariesByUserId(user.getId());
+        List<Itinerary> itineraries = itineraryService.getItinerariesByUser(user);
 
         assertThat(itineraries).isNotNull();
-//        assertThat(itineraries.get(0).getName()).isEqualTo(itinerary.getName());
+        assertThat(itineraries.getFirst().getName()).isEqualTo(itinerary.getName());
     }
 
-    //FIXME: This test is failing
+    //FIXME: This test is failing because of newUser not being saved in the repository
 //    @Test
 //    void verifyUpdateItineraryUser() {
 //        User newUser = User.builder()
@@ -161,6 +186,8 @@ class ItineraryServiceTest
 //                .email("newuser@example.com")
 //                .build();
 //
+////        userRepository.save(newUser);
+////        when(userRepository.save(any(User.class))).thenReturn(newUser);
 //        when(itineraryRepository.findByUuid(any(UUID.class))).thenReturn(itinerary);
 //        when(itineraryRepository.save(any(Itinerary.class))).thenReturn(itinerary);
 //
@@ -186,46 +213,3 @@ class ItineraryServiceTest
         assertThat(itinerary.getItinerarySteps().get(0).getName()).isEqualTo("Day 1 - Visit the Viking Ship Museum");
     }
 }
-
-//FIXME: GEHOEREN NICHT DAZU
-//    @Test
-//    void verifyFindItineraryByUuid()
-//    {
-//        when(itineraryRepository.findByUuid(any(UUID.class))).thenReturn(itinerary);
-//
-//        var foundItinerary = itineraryService.findItineraryByUuid(UUID.randomUUID());
-//
-//        assertThat(foundItinerary).isPresent();
-//        assertEquals(itineraryDto.name(), foundItinerary.get().name());
-//        assertEquals(itineraryDto.startDate(), foundItinerary.get().startDate());
-//        assertEquals(itineraryDto.endDate(), foundItinerary.get().endDate());
-//        assertEquals(itineraryDto.itinerarySteps().size(), foundItinerary.get().itinerarySteps().size());
-//    }
-
-
-
-//    @Test
-//    void verifyUpdateItinerary()
-//    {
-//        when(itineraryRepository.findById(any(Long.class))).thenReturn(itinerary);
-//
-//        var updatedItinerary = itineraryService.updateItinerary(itineraryDto);
-//
-//        assertThat(updatedItinerary).isPresent();
-//        assertEquals(itineraryDto.name(), updatedItinerary.get().name());
-//        assertEquals(itineraryDto.startDate(), updatedItinerary.get().startDate());
-//        assertEquals(itineraryDto.endDate(), updatedItinerary.get().endDate());
-//        assertEquals(itineraryDto.itinerarySteps().size(), updatedItinerary.get().itinerarySteps().size());
-//    }
-
-//    List.of(new ItineraryDto("Day 1", LocalDateTime.of(2022, 12, 10, 5, 30), null, null),
-//        new ItineraryDto("Day 2", LocalDateTime.of(2022, 12, 11, 5, 30), null, null),
-//        new ItineraryDto("Day 3", LocalDateTime.of(2022, 12, 12, 5, 30), null, null),
-//        new ItineraryDto("Day 4", LocalDateTime.of(2022, 12, 13, 5, 30), null, null),
-//        new ItineraryDto("Day 5", LocalDateTime.of(2022, 12, 14, 5, 30), null, null),
-//        new ItineraryDto("Day 6", LocalDateTime.of(2022, 12, 15, 5, 30), null, null),
-//        new ItineraryDto("Day 7", LocalDateTime.of(2022, 12, 16, 5, 30), null, null),
-//        new ItineraryDto("Day 8", LocalDateTime.of(2022, 12, 17, 5, 30), null, null),
-//        new ItineraryDto("Day 9", LocalDateTime.of(2022, 12, 18, 5, 30), null, null),
-//        new ItineraryDto("Day 10", LocalDateTime.of(2022, 12, 19, 5, 30), null, null)
-//        )
