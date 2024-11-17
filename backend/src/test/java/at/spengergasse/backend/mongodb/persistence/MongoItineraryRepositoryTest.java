@@ -1,6 +1,7 @@
 package at.spengergasse.backend.mongodb.persistence;
 
 import at.spengergasse.backend.mongodb.model.Itinerary;
+import at.spengergasse.backend.mongodb.model.ItineraryStep;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,10 @@ class MongoItineraryRepositoryTest {
                 .name("European Adventure")
                 .startDate(LocalDateTime.of(2024, 11, 1, 10, 0))
                 .endDate(LocalDateTime.of(2024, 11, 15, 18, 0))
+                .itinerarySteps(List.of(ItineraryStep.builder()
+                                .name("Step Nr. 1")
+                                .stepDate(LocalDateTime.of(2024, 11, 1, 10, 0))
+                        .build()))
                 .build();
     }
 
@@ -46,6 +51,8 @@ class MongoItineraryRepositoryTest {
         Itinerary savedItinerary = itineraryRepository.save(itinerary);
         assertNotNull(savedItinerary.getId());
         assertEquals("European Adventure", savedItinerary.getName());
+        assertEquals(LocalDateTime.of(2024, 11, 1, 10, 0),
+                savedItinerary.getItinerarySteps().getFirst().getStepDate());
     }
 
     @Test
