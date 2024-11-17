@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = UserController.USER_PATH)
 public class UserController {
-    public static final String USER_PATH = "api/user";
+    public static final String USER_PATH = "api/relational/user";
     private final JpaUserService userService;
 
     @PostMapping(value = "/add", produces = "application/json")
