@@ -11,8 +11,8 @@ import java.util.List;
 
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping(path = UserController.USER_PATH)
-public class UserController
+@RequestMapping(path = MongoUserController.USER_PATH)
+public class MongoUserController
 {
     public static final String USER_PATH = "api/mongodb/user";
     private final MongoUserService userService;

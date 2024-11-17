@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping(path = UserController.USER_PATH)
-public class UserController {
+@RequestMapping(path = JpaUserController.USER_PATH)
+public class JpaUserController {
     public static final String USER_PATH = "api/relational/user";
     private final JpaUserService userService;
 

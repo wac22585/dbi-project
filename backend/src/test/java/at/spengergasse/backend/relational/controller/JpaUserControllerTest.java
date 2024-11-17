@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static at.spengergasse.backend.relational.controller.UserController.USER_PATH;
+import static at.spengergasse.backend.relational.controller.JpaUserController.USER_PATH;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTest
+class JpaUserControllerTest
 {
     private final String path = "http://localhost/";
 
