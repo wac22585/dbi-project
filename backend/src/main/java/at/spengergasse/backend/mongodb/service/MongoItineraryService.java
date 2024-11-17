@@ -1,40 +1,64 @@
 package at.spengergasse.backend.mongodb.service;
 
+import at.spengergasse.backend.mongodb.dto.ItineraryDto;
 import at.spengergasse.backend.mongodb.model.Itinerary;
 import at.spengergasse.backend.mongodb.persistence.MongoItineraryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
-public class MongoItineraryService {
-
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+public class MongoItineraryService
+{
     private final MongoItineraryRepository itineraryRepository;
 
-    @Autowired
-    public MongoItineraryService(MongoItineraryRepository itineraryRepository) {
-        this.itineraryRepository = itineraryRepository;
-    }
-
     // Create or Update an itinerary
-    public Itinerary saveItinerary(Itinerary itinerary) {
-        return itineraryRepository.save(itinerary);
+    public Optional<ItineraryDto> saveItinerary(ItineraryDto itinerary)
+    {
+        if (itinerary == null) return Optional.empty();
+
+        try {
+            Itinerary save = ItineraryDto.toEntity(itinerary);
+            itineraryRepository.save(save);
+            return Optional.of(itinerary);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     // Find an itinerary by ID
-    public Optional<Itinerary> getItineraryById(String id) {
-        return itineraryRepository.findById(id);
+    public Optional<ItineraryDto> findItineraryByUUID(UUID uuid)
+    {
+        if(uuid == null) return Optional.empty();
+
+        try {
+            return Optional.of(ItineraryDto.fromEntity(itineraryRepository.findByUuid(uuid)));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     // Get all itineraries
-    public List<Itinerary> getAllItineraries() {
-        return itineraryRepository.findAll();
+    public List<ItineraryDto> findAllItineraries() {
+        return itineraryRepository.findAll().stream()
+                .map(ItineraryDto::fromEntity)
+                .toList();
     }
 
     // Delete an itinerary by ID
-    public void deleteItineraryById(String id) {
-        itineraryRepository.deleteById(id);
+    public boolean deleteItineraryByUUID(UUID uuid)
+    {
+        if (uuid == null || itineraryRepository.findByUuid(uuid) == null) return false;
+        try {
+            itineraryRepository.deleteByUuid(uuid);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

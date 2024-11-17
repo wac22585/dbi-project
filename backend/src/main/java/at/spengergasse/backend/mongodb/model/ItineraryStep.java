@@ -1,5 +1,6 @@
 package at.spengergasse.backend.mongodb.model;
 
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,12 +19,14 @@ public class ItineraryStep
 {
     @Id
     private String id;
+    @Column(nullable = false)
     private String name;
     private LocalDateTime stepDate;
     private List<RouteStop> routeStops;
 
     @Builder
-    public ItineraryStep(String name, LocalDateTime stepDate, List<RouteStop> routeStops) {
+    public ItineraryStep(String name, LocalDateTime stepDate, List<RouteStop> routeStops)
+    {
         this.name = name;
         this.stepDate = stepDate;
         this.routeStops = routeStops != null ? routeStops : new ArrayList<>();

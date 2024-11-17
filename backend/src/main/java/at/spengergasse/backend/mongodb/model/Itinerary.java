@@ -1,5 +1,6 @@
 package at.spengergasse.backend.mongodb.model;
 
+import jakarta.persistence.Column;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,7 +18,9 @@ public class Itinerary
 {
     @Id
     private String id;
+    @Column(nullable = false, unique = true)
     private UUID uuid;
+    @Column(nullable = false)
     private String name;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -25,7 +28,8 @@ public class Itinerary
     private List<ItineraryStep> itinerarySteps;
 
     @Builder
-    public Itinerary(UUID uuid, String name, LocalDateTime startDate, LocalDateTime endDate, User user, List<ItineraryStep> itinerarySteps) {
+    public Itinerary(UUID uuid, String name, LocalDateTime startDate, LocalDateTime endDate, User user, List<ItineraryStep> itinerarySteps)
+    {
         this.uuid = uuid;
         this.name = name;
         this.startDate = startDate;

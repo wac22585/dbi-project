@@ -9,7 +9,8 @@ import java.util.Optional;
 public interface MongoUserRepository extends MongoRepository<User, String> {
 
     List<User> findAll();
-    Optional<User> findById(String id);
+    User findByEmail(String email);
+    User findByUsername(String username);
     User save(User entity);
-    void deleteById(String id);
+    void deleteByUsername(String username);
 }
