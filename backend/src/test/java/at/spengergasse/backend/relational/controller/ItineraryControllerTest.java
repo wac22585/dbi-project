@@ -1,8 +1,8 @@
-package at.spengergasse.backend.controller;
+package at.spengergasse.backend.relational.controller;
 
-import at.spengergasse.backend.dto.ItineraryDto;
-import at.spengergasse.backend.model.*;
-import at.spengergasse.backend.service.ItineraryService;
+import at.spengergasse.backend.relational.dto.ItineraryDto;
+import at.spengergasse.backend.relational.model.*;
+import at.spengergasse.backend.relational.service.JpaItineraryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static at.spengergasse.backend.controller.ItineraryController.ITINERARY_PATH;
+import static at.spengergasse.backend.relational.controller.JpaItineraryController.ITINERARY_PATH;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -38,7 +38,7 @@ class ItineraryControllerTest
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ItineraryService itineraryService;
+    private JpaItineraryService itineraryService;
 
     private ItineraryDto itineraryDto;
     private Itinerary itinerary;

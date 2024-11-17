@@ -1,6 +1,7 @@
 package at.spengergasse.backend.relational.persistence;
 
 import at.spengergasse.backend.relational.model.Itinerary;
+import at.spengergasse.backend.relational.model.User;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;

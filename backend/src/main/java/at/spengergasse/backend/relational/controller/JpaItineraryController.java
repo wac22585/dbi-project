@@ -1,7 +1,7 @@
-package at.spengergasse.backend.controller;
+package at.spengergasse.backend.relational.controller;
 
-import at.spengergasse.backend.dto.ItineraryDto;
-import at.spengergasse.backend.service.ItineraryService;
+import at.spengergasse.backend.relational.dto.ItineraryDto;
+import at.spengergasse.backend.relational.service.JpaItineraryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping(path = ItineraryController.ITINERARY_PATH)
-public class ItineraryController {
+@RequestMapping(path = JpaItineraryController.ITINERARY_PATH)
+public class JpaItineraryController {
     public static final String ITINERARY_PATH = "api/itinerary";
-    private final ItineraryService itineraryService;
+    private final JpaItineraryService itineraryService;
 
     @PostMapping(value = "/add", produces = "application/json")
     public ResponseEntity<ItineraryDto>  addItinerary(@RequestBody ItineraryDto itineraryDto) {
