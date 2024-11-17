@@ -1,8 +1,10 @@
 package at.spengergasse.backend.mongodb.dto;
 
 import at.spengergasse.backend.mongodb.model.ItineraryStep;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public record ItineraryStepDto(
@@ -12,23 +14,40 @@ public record ItineraryStepDto(
 ) {
     public static ItineraryStepDto fromEntity(ItineraryStep itineraryStep)
     {
-        return new ItineraryStepDto(
+        ItineraryStepDto itineraryStepDto = new ItineraryStepDto(
                 itineraryStep.getName(),
                 itineraryStep.getStepDate(),
-                itineraryStep.getRouteStops().stream()
-                        .map(RouteStopDto::fromEntity)
-                        .toList()
+                new ArrayList<>()
         );
+
+        if (itineraryStep.getRouteStops() != null && !itineraryStep.getRouteStops().isEmpty())
+        {
+            itineraryStepDto.routeStops().addAll(
+                   itineraryStep.getRouteStops().stream()
+                           .map(RouteStopDto::fromEntity)
+                           .toList()
+           );
+        }
+
+        return itineraryStepDto;
     }
 
     public static ItineraryStep toEntity(ItineraryStepDto itineraryStepDto)
     {
-        return new ItineraryStep(
-                itineraryStepDto.name(),
-                itineraryStepDto.stepDate(),
-                itineraryStepDto.routeStops().stream()
-                        .map(RouteStopDto::toEntity)
-                        .toList()
-        );
+        ItineraryStep itineraryStep = ItineraryStep.builder()
+                .name(itineraryStepDto.name())
+                .stepDate(itineraryStepDto.stepDate())
+                .build();
+
+        if (itineraryStepDto.routeStops() != null && !itineraryStepDto.routeStops().isEmpty())
+        {
+            itineraryStep.getRouteStops().addAll(
+                    itineraryStepDto.routeStops().stream()
+                            .map(RouteStopDto::toEntity)
+                            .toList()
+            );
+        }
+
+        return itineraryStep;
     }
 }

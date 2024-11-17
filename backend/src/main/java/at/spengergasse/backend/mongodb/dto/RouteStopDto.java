@@ -12,6 +12,7 @@ public record RouteStopDto (
 ) {
     public static RouteStopDto fromEntity(RouteStop routeStop)
     {
+
         return new RouteStopDto(
                 routeStop.getArrivalTime(),
                 routeStop.getTotalDistance(),

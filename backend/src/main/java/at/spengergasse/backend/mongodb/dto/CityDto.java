@@ -6,21 +6,13 @@ import java.util.List;
 
 public record CityDto(
         String city,
-        String country,
-        List<RouteStopDto> routeStopsCurrent,
-        List<RouteStopDto> routeStopsNext
+        String country
 ) {
     public static CityDto fromEntity(City city)
     {
         return new CityDto(
                 city.getCity(),
-                city.getCountry(),
-                city.getRouteStopsCurrent().stream()
-                        .map(RouteStopDto::fromEntity)
-                        .toList(),
-                city.getRouteStopsNext().stream()
-                        .map(RouteStopDto::fromEntity)
-                        .toList()
+                city.getCountry()
         );
     }
 
@@ -28,13 +20,7 @@ public record CityDto(
     {
         return new City(
                 cityDto.city(),
-                cityDto.country(),
-                cityDto.routeStopsCurrent().stream()
-                        .map(RouteStopDto::toEntity)
-                        .toList(),
-                cityDto.routeStopsNext().stream()
-                        .map(RouteStopDto::toEntity)
-                        .toList()
+                cityDto.country()
         );
     }
 }

@@ -24,17 +24,15 @@ public class Itinerary
     private String name;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private User user;
     private List<ItineraryStep> itinerarySteps;
 
     @Builder
-    public Itinerary(UUID uuid, String name, LocalDateTime startDate, LocalDateTime endDate, User user, List<ItineraryStep> itinerarySteps)
+    public Itinerary(UUID uuid, String name, LocalDateTime startDate, LocalDateTime endDate, List<ItineraryStep> itinerarySteps)
     {
         this.uuid = uuid;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.user = user;
         this.itinerarySteps = itinerarySteps != null ? itinerarySteps : new ArrayList<>();
     }
 }

@@ -22,15 +22,11 @@ public class City
     private String city;
     @Column(nullable = false, unique = true)
     private String country;
-    private List<RouteStop> routeStopsCurrent;
-    private List<RouteStop> routeStopsNext;
 
     @Builder
-    public City(String city, String country, List<RouteStop> routeStopsCurrent, List<RouteStop> routeStopsNext)
+    public City(String city, String country)
     {
         this.city = city;
         this.country = country;
-        this.routeStopsCurrent = routeStopsCurrent != null ? routeStopsCurrent : new ArrayList<>();
-        this.routeStopsNext = routeStopsNext != null ? routeStopsNext : new ArrayList<>();
     }
 }
