@@ -1,7 +1,7 @@
 package at.spengergasse.backend.relational.controller;
 
 import at.spengergasse.backend.relational.dto.UserDto;
-import at.spengergasse.backend.relational.service.UserService;
+import at.spengergasse.backend.relational.service.JpaUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = UserController.USER_PATH)
 public class UserController {
     public static final String USER_PATH = "api/user";
-    private final UserService userService;
+    private final JpaUserService userService;
 
     @PostMapping(value = "/add", produces = "application/json")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {

@@ -2,7 +2,7 @@ package at.spengergasse.backend.relational.controller;
 
 import at.spengergasse.backend.relational.dto.ItineraryDto;
 import at.spengergasse.backend.relational.dto.UserDto;
-import at.spengergasse.backend.relational.service.UserService;
+import at.spengergasse.backend.relational.service.JpaUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class UserControllerTest
     private ObjectMapper objectMapper;
 
     @MockBean
-    private UserService userService;
+    private JpaUserService userService;
 
     private UserDto userDto;
 

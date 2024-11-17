@@ -13,8 +13,8 @@ import java.util.List;
 @Document(collection = "cities")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class City {
-
+public class City
+{
     @Id
     private String id;
     private String city;

@@ -11,8 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
-
+public class User
+{
     @Id
     private String id;
     private String username;

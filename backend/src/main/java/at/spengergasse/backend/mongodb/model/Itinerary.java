@@ -13,8 +13,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Itinerary {
-
+public class Itinerary
+{
     @Id
     private String id;
     private UUID uuid;

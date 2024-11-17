@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 class UserServiceTest
 {
     @Autowired
-    private UserService userService;
+    private JpaUserService userService;
     @MockBean
     private JpaUserRepository userRepository;
 

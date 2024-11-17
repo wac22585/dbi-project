@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @Document(collection = "route_stops")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RouteStop {
-
+public class RouteStop
+{
     @Id
     private String id;
     private LocalDateTime arrivalTime;

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class ItineraryServiceTest
 {
     @Autowired
-    private ItineraryService itineraryService;
+    private JpaItineraryService itineraryService;
     @MockBean
     private JpaItineraryRepository itineraryRepository;
 

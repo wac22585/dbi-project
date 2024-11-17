@@ -14,8 +14,8 @@ import java.util.List;
 @Document(collection = "itinerary_steps")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ItineraryStep {
-
+public class ItineraryStep
+{
     @Id
     private String id;
     private String name;

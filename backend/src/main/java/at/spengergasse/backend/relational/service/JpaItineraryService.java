@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class ItineraryService {
+public class JpaItineraryService {
 
     private final JpaItineraryRepository itineraryRepository;
 

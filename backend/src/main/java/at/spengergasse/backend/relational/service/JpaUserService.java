@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class UserService
+public class JpaUserService
 {
     private final JpaUserRepository userRepository;
     private final JpaItineraryRepository itineraryRepository;
