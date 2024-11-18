@@ -1,14 +1,14 @@
 package at.spengergasse.backend.relational.persistence;
 
 import at.spengergasse.backend.relational.model.User;
+import at.spengergasse.backend.relational.service.JpaUserService;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.Repository;
 
-public interface JpaUserRepository extends Repository<User, Long>
+import java.util.List;
+
+public interface JpaUserRepository extends JpaRepository<User, Long>
 {
-    User save(User user);
-    User findById(Long id);
     User findByUsername(String username);
-    void deleteById(Long id);
     void deleteByUsername(String username);
-    void deleteAll();
 }
