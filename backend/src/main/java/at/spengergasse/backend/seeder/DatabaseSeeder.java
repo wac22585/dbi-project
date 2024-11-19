@@ -1,5 +1,6 @@
 package at.spengergasse.backend.seeder;
 
+import at.spengergasse.backend.mongodb.model.Itinerary;
 import at.spengergasse.backend.mongodb.persistence.MongoUserRepository;
 import at.spengergasse.backend.relational.model.User;
 import at.spengergasse.backend.relational.persistence.JpaUserRepository;

@@ -63,7 +63,7 @@ class UserRepositoryTest
 
         userRepository.deleteById(user.getId());
 
-        assertThat(userRepository.findById(user.getId())).isNull();
+        assertThat(userRepository.findById(user.getId())).isEmpty();
     }
 
     @Test
@@ -82,6 +82,6 @@ class UserRepositoryTest
         User user = this.user;
         user = userRepository.save(user);
 
-        assertThat(userRepository.findById(user.getId()).getItineraries().size()).isEqualTo(1);
+        assertThat(userRepository.findById(user.getId()).get().getItineraries().size()).isEqualTo(1);
     }
 }
