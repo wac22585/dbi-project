@@ -1,12 +1,13 @@
 package at.spengergasse.backend.seeder;
 
-import at.spengergasse.backend.mongodb.model.Itinerary;
 import at.spengergasse.backend.mongodb.persistence.MongoUserRepository;
+import at.spengergasse.backend.mongodb.service.MongoUserService;
 import at.spengergasse.backend.relational.model.User;
 import at.spengergasse.backend.relational.persistence.JpaUserRepository;
+import at.spengergasse.backend.relational.service.JpaUserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,11 +17,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class DatabaseSeeder
 {
-
     @Value("${seeder.enabled:true}")
     private boolean seederEnabled;
+
+    private final MongoUserService mongoUserService;
+    private final JpaUserService jpaUserService;
 
     private long benchmarkOperation(Runnable operation) {
         long startTime = System.nanoTime();
@@ -78,30 +82,14 @@ public class DatabaseSeeder
         results.put("JPA CREATE", TimeUnit.NANOSECONDS.toMillis(jpaCreate));
 
         //Update
+        long mongoUpdate = benchmarkOperation(() -> mongoUserService.updateUserName("username0", "newUsername0"));
+        results.put("MongoDB UPDATE", TimeUnit.NANOSECONDS.toMillis(mongoUpdate));
+
+        long jpaUpdate = benchmarkOperation(() -> jpaUserService.updateUserName("username0", "newUsername0"));
+        results.put("JPA UPDATE", TimeUnit.NANOSECONDS.toMillis(jpaUpdate));
 
         //Delete
 
         return results;
     }
-
-    /*@Bean
-    CommandLineRunner initDatabase(
-            MongoUserRepository mongoUserRepository,
-            JpaUserRepository jpaUserRepository) {
-        if (!seederEnabled) {
-            return args -> System.out.println("Seeder is disabled.");
-        }
-
-        return args -> {
-            //Generate data
-            List<at.spengergasse.backend.mongodb.model.User> mongoUsers = generateMongoTestData(1000);
-            List<at.spengergasse.backend.relational.model.User> jpaUsers = generateRelationalTestData(1000);
-
-            //Benchmark CREATE
-            long mongoCreate = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers));
-            long jpaCreate = benchmarkOperation(() -> jpaUserRepository.saveAll(jpaUsers));
-            System.out.println("MongoDB CREATE: " + TimeUnit.NANOSECONDS.toMillis(mongoCreate) + "ms");
-            System.out.println("JPA CREATE: " + TimeUnit.NANOSECONDS.toMillis(jpaCreate) + "ms");
-        };
-    }*/
 }

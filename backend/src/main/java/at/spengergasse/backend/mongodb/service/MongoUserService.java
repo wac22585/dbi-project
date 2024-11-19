@@ -1,6 +1,7 @@
 package at.spengergasse.backend.mongodb.service;
 
 import at.spengergasse.backend.mongodb.dto.UserDto;
+import at.spengergasse.backend.mongodb.model.User;
 import at.spengergasse.backend.mongodb.persistence.MongoUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,22 @@ public class MongoUserService
         return userRepository.findAll().stream()
                 .map(UserDto::fromEntity)
                 .toList();
+    }
+
+    public Optional<UserDto> updateUserName(String username, String newUsername)
+    {
+        if (username == null || newUsername == null) return Optional.empty();
+
+        try {
+            User user = userRepository.findByUsername(username);
+            if (user == null) return Optional.empty();
+
+            user.setUsername(newUsername);
+            userRepository.save(user);
+            return Optional.of(UserDto.fromEntity(user));
+        } catch(Exception e) {
+            return Optional.empty();
+        }
     }
 
     public boolean deleteUserByUsername(String username)
