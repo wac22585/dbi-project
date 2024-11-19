@@ -50,6 +50,19 @@ public class MongoItineraryService
                 .toList();
     }
 
+    // Delete an itinerary
+    public boolean deleteItinerary(Itinerary itinerary)
+    {
+        if (itinerary == null || itinerary.getUuid() == null) return false;
+
+        try {
+            itineraryRepository.deleteById(itinerary.getId());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     // Delete an itinerary by ID
     public boolean deleteItineraryByUUID(UUID uuid)
     {

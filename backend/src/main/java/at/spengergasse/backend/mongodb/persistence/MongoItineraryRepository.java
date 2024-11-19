@@ -11,5 +11,6 @@ public interface MongoItineraryRepository extends MongoRepository<Itinerary, Str
     List<Itinerary> findAll();
     Itinerary findByUuid(UUID uuid);
     Itinerary save(Itinerary entity);
+    void deleteById(String id);
     void deleteByUuid(UUID uuid);
 }
