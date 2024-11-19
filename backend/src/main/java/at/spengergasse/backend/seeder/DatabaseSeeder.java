@@ -66,7 +66,6 @@ public class DatabaseSeeder
             JpaUserRepository jpaUserRepository,
             int size)
     {
-
         mongoUserRepository.deleteAll();
         jpaUserRepository.deleteAll();
 
@@ -75,18 +74,19 @@ public class DatabaseSeeder
         List<at.spengergasse.backend.mongodb.model.User> mongoUsers = generateMongoTestData(size);
         List<at.spengergasse.backend.relational.model.User> jpaUsers = generateRelationalTestData(size);
 
+        //Create
         long mongoCreate = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers));
-        results.put("MongoDB CREATE", TimeUnit.NANOSECONDS.toMillis(mongoCreate));
+        results.put("CREATE MongoDB", TimeUnit.NANOSECONDS.toMillis(mongoCreate));
 
         long jpaCreate = benchmarkOperation(() -> jpaUserRepository.saveAll(jpaUsers));
-        results.put("JPA CREATE", TimeUnit.NANOSECONDS.toMillis(jpaCreate));
+        results.put("CREATE JPA", TimeUnit.NANOSECONDS.toMillis(jpaCreate));
 
         //Update
         long mongoUpdate = benchmarkOperation(() -> mongoUserService.updateUserName("username0", "newUsername0"));
-        results.put("MongoDB UPDATE", TimeUnit.NANOSECONDS.toMillis(mongoUpdate));
+        results.put("UPDATE MongoDB", TimeUnit.NANOSECONDS.toMillis(mongoUpdate));
 
         long jpaUpdate = benchmarkOperation(() -> jpaUserService.updateUserName("username0", "newUsername0"));
-        results.put("JPA UPDATE", TimeUnit.NANOSECONDS.toMillis(jpaUpdate));
+        results.put("UPDATE JPA", TimeUnit.NANOSECONDS.toMillis(jpaUpdate));
 
         //Delete
 
