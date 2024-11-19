@@ -163,36 +163,7 @@ class JpaItineraryServiceTest
         assertThat(itineraries).isNotNull();
         assertThat(itineraries.get(0).getName()).isEqualTo(itinerary.getName());
     }
-
-    //FIXME: Index out of Bounds
-    /*@Test
-    void verifyGetItinerariesByUserId() {
-        when(itineraryRepository.findAllByUserId(any(Long.class))).thenReturn(List.of(itinerary));
-
-        var itineraries = itineraryService.getItinerariesByUserId(user.getId());
-
-        assertThat(Optional.ofNullable(itineraries)).isNotNull();
-//        assertThat(itineraries.get(0).getName()).isEqualTo(itinerary.getName());
-    }*/
-
-    //FIXME: This test is failing
-//    @Test
-//    void verifyUpdateItineraryUser() {
-//        User newUser = User.builder()
-//                .username("newUser")
-//                .email("newuser@example.com")
-//                .build();
-//
-//        when(itineraryRepository.findByUuid(any(UUID.class))).thenReturn(itinerary);
-//        when(itineraryRepository.save(any(Itinerary.class))).thenReturn(itinerary);
-//
-//        var updatedItinerary = itineraryService.updateItineraryUser(itineraryId, newUser);
-//
-//        updatedItinerary.ifPresent(it -> itinerary = ItineraryDto.toEntity(it));
-//        assertThat(updatedItinerary).isPresent();
-//        assertThat(itinerary.getUser().getUsername()).isEqualTo(newUser.getUsername());
-//        assertThat(itinerary.getUuid()).isEqualTo(itineraryId);
-//    }
+    
 
     @Test
     void verifyAddItineraryStep() {

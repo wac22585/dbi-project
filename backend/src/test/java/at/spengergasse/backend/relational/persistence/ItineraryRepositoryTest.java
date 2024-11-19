@@ -107,7 +107,6 @@ class ItineraryRepositoryTest
 
         itineraryRepository.deleteByUuid(itinerary.getUuid());
 
-        //assertThat(itineraryRepository.findByUuid(itinerary.getUuid())).isNull();
     }
 
     @Test

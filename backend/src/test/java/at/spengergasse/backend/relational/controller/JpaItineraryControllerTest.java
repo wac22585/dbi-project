@@ -159,17 +159,6 @@ class JpaItineraryControllerTest
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
-//FIXME: This test is invalid because the user id is null..
-//    @Test
-//    void verifyUpdateItineraryUser() throws Exception {
-//        UUID uuid = itineraryId;
-//        when(itineraryService.updateItineraryUser(uuid, user)).thenReturn(Optional.ofNullable(itineraryDto));
-//        mockMvc.perform(MockMvcRequestBuilders.put(path + ITINERARY_PATH + "/updateUser")
-//                .param("uuid", uuid.toString())
-//                .param("user", user.toString()))
-//                .andDo(print())
-//                .andExpect(status().isOk());
-//    }
 
     @Test
     void verifyUpdateItineraryUserWithInvalidProperties() throws Exception {
@@ -199,18 +188,6 @@ class JpaItineraryControllerTest
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
-
-//FIXME: geht eif nicht weil baddie code 400 itinerary null
-//    @Test
-//    void verifyDeleteItinerary() throws Exception {
-//        ItineraryDto itineraryDto = this.itineraryDto;
-//        when(itineraryService.deleteItinerary(itinerary)).thenReturn(true);
-//        mockMvc.perform(MockMvcRequestBuilders.delete(path + ITINERARY_PATH + "/delete")
-//                .contentType("application/json")
-//                .content(objectMapper.writeValueAsString(itineraryDto)))
-//                .andDo(print())
-//                .andExpect(status().isOk());
-//    }
 
     @Test
     void verifyDeleteEmptyItinerary() throws Exception {
