@@ -91,6 +91,15 @@ class UserRepositoryTest
         User user = this.user;
         user = userRepository.save(user);
 
-        assertThat(userRepository.findByEmail(user.getEmail())).isInstanceOf(UserWithoutPwd.class);
+        assertThat(userRepository.findUserByEmail(user.getEmail())).isInstanceOf(UserWithoutPwd.class);
+    }
+
+    @Test
+    void verifyUserWithItineraryNames()
+    {
+        User user = this.user;
+        user = userRepository.save(user);
+
+        assertThat(userRepository.findByUsername(user.getUsername())).isInstanceOf(UserWithItineraryNames.class);
     }
 }

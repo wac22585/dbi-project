@@ -17,9 +17,9 @@ public interface MongoUserRepository extends MongoRepository<User, String> {
     @Query(value = "{ '?0' : ?1 }", fields = "{ '?2' : 1 }")
     List<User> findWithProjectionAndSorting(String fieldName, String value, String projectionField, String sortField, boolean isAscending);
     //FIXME: has to be replaced cuz of the projection findByEmail()
-//    User findByEmail(String email);
+    User findByEmail(String email);
     User findByUsername(String username);
     User save(User entity);
     void deleteByUsername(String username);
-    UserWithoutPwd findByEmail(String email);
+    UserWithoutPwd findUserByEmail(String email);
 }

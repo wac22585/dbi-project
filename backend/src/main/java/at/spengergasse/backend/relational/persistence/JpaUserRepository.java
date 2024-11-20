@@ -26,7 +26,9 @@ public interface JpaUserRepository extends JpaRepository<User, Long>
 //            @Param("sortField") String sortField,
 //            @Param("sortDirection") String sortDirection
 //    );
-    UserWithoutPwd findByEmail(String email);
+    UserWithoutPwd findUserByEmail(String email);
+    User findByEmail(String email);
 
+    UserWithItineraryNames findUserByUsername(String username);
     void deleteByUsername(String username);
 }
