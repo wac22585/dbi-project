@@ -1,9 +1,13 @@
 package at.spengergasse.backend.seeder;
 
+import at.spengergasse.backend.mongodb.persistence.MongoItineraryRepository;
 import at.spengergasse.backend.mongodb.persistence.MongoUserRepository;
+import at.spengergasse.backend.mongodb.service.MongoItineraryService;
 import at.spengergasse.backend.mongodb.service.MongoUserService;
 import at.spengergasse.backend.relational.model.User;
+import at.spengergasse.backend.relational.persistence.JpaItineraryRepository;
 import at.spengergasse.backend.relational.persistence.JpaUserRepository;
+import at.spengergasse.backend.relational.service.JpaItineraryService;
 import at.spengergasse.backend.relational.service.JpaUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,9 @@ public class DatabaseSeeder
     private boolean seederEnabled;
 
     private final MongoUserService mongoUserService;
+    private final MongoItineraryService mongoItineraryService;
     private final JpaUserService jpaUserService;
+    private final JpaItineraryService jpaItineraryService;
 
     private long benchmarkOperation(Runnable operation) {
         long startTime = System.nanoTime();
@@ -80,13 +86,18 @@ public class DatabaseSeeder
         return itineraries;
     }
 
-    public static List<at.spengergasse.backend.relational.model.Itinerary> generateRelationalItinerariesTestData(int size)
+    public static List<at.spengergasse.backend.relational.model.Itinerary> generateRelationalItineraryTestData(int size)
     {
         List<at.spengergasse.backend.relational.model.Itinerary> itineraries = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             itineraries.add(at.spengergasse.backend.relational.model.Itinerary.builder()
                     .uuid(UUID.randomUUID())
                     .name("name" + i)
+                    .user(User.builder()
+                                    .username("username7")
+                                    .email("email7")
+                                    .password("password")
+                                    .build())
                     .startDate(getRandomDateTime(LocalDateTime.now(), LocalDateTime.now().plusDays(1000)))
                     .endDate(getRandomDateTime(LocalDateTime.now().plusDays(1000), LocalDateTime.now().plusDays(2000)))
                     .itinerarySteps(List.of(at.spengergasse.backend.relational.model.ItineraryStep.builder()
@@ -101,10 +112,14 @@ public class DatabaseSeeder
     public Map<String, Long> seedAndBenchmarkDatabase(
             MongoUserRepository mongoUserRepository,
             JpaUserRepository jpaUserRepository,
+            MongoItineraryRepository mongoItineraryRepository,
+            JpaItineraryRepository jpaItineraryRepository,
             int size)
     {
         mongoUserRepository.deleteAll();
         jpaUserRepository.deleteAll();
+        mongoItineraryRepository.deleteAll();
+        jpaItineraryRepository.deleteAll();
 
         Map<String, Long> results = new HashMap<>();
 
@@ -112,7 +127,7 @@ public class DatabaseSeeder
         List<at.spengergasse.backend.relational.model.User> jpaUsers = generateRelationalUserTestData(size);
 
         List<at.spengergasse.backend.mongodb.model.Itinerary> mongoItineraries = generateMongoItineraryTestData(size);
-        List<at.spengergasse.backend.relational.model.Itinerary> jpaItineraries = generateRelationalItinerariesTestData(size);
+        List<at.spengergasse.backend.relational.model.Itinerary> jpaItineraries = generateRelationalItineraryTestData(size);
 
         //Create
         long mongoCreate = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers));
@@ -150,15 +165,19 @@ public class DatabaseSeeder
         results.put("JPA FIND BY USERNAME", TimeUnit.NANOSECONDS.toMillis(jpaFindByUsername));
 
         //Find by Email Project Username and Email
-        long mongoFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> mongoUserRepository.findByEmail("email0"));
+        long mongoFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> mongoUserRepository.findUserByEmail("email0"));
         results.put("MongoDB FIND BY EMAIL PROJECT USERNAME AND EMAIL", TimeUnit.NANOSECONDS.toMillis(mongoFindByEmailProjectUsernameAndEmail));
 
         long jpaFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> jpaUserRepository.findByEmail("email0"));
         results.put("JPA FIND BY EMAIL PROJECT USERNAME AND EMAIL", TimeUnit.NANOSECONDS.toMillis(jpaFindByEmailProjectUsernameAndEmail));
 
-        //Find by User Project Username and ItineraryName and Sort by CreatedAt
+        //Find by Username "Max" project Username and Itinerary Names and Sort by CreatedAt
+        long mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findByUsername("username0"));
         long mongoCreateItineraries = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers));
         long mongoFindByUserProjectUsernameAndItineraryNameAndSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findByUsername("username0"));
+        //FIXME: FUNKTIONIERT NICHT :(
+        long jpaFindByUsernameProjectUsernameAndItineraryNameSortByCreatedAt = benchmarkOperation(() -> jpaUserRepository.findUserByUsername("username7"));
+        results.put("JPA FIND BY USERNAME PROJECT USERNAME, EMAIL AND ITINERARIES AND SORT BY CREATED AT", TimeUnit.NANOSECONDS.toMillis(jpaFindByUsernameProjectUsernameAndItineraryNameSortByCreatedAt));
 
         return results;
     }
