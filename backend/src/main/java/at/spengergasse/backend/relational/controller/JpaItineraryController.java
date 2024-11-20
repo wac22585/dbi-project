@@ -9,14 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
 @RequestMapping(path = JpaItineraryController.ITINERARY_PATH)
+@CrossOrigin(origins = "http://localhost:3001")
 public class JpaItineraryController {
-    public static final String ITINERARY_PATH = "api/itinerary";
+    public static final String ITINERARY_PATH = "api/relational/itinerary";
     private final JpaItineraryService itineraryService;
+
+    @GetMapping(value = "/all", produces = "application/json")
+    public ResponseEntity<List<ItineraryDto>> fetchAllItineraries() {
+        List<ItineraryDto> itineraries = itineraryService.getAllItineraries();
+        return ResponseEntity.ok(itineraries);
+    }
 
     @PostMapping(value = "/add", produces = "application/json")
     public ResponseEntity<ItineraryDto>  addItinerary(@RequestBody ItineraryDto itineraryDto) {
