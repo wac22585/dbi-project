@@ -1,4 +1,10 @@
 <template>
+  <v-app-bar app>
+      <v-toolbar-title>Results View</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn text to="/Benchmark">Benchmark</v-btn>
+      <v-btn text to="/ItineraryTables">Itinerary Tables</v-btn>
+    </v-app-bar>
   <v-container>
     <v-card>
       <v-card-title>Benchmark-Ergebnisse</v-card-title>
