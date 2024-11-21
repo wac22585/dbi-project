@@ -61,7 +61,7 @@ import { mapActions } from 'vuex';
     data() {
       return {
         selectedTest: 'MongoDb vs MySQL',
-        tests: ['MongoDb vs MySQL', 'Embedding vs Referencing'],
+        tests: ['MongoDb vs MySQL', 'Referencing vs Embedding'],
         results: {},
         error: null,
         loading: false,
@@ -91,7 +91,7 @@ import { mapActions } from 'vuex';
       columnHeaders() {
         if (this.selectedTest === 'MongoDb vs MySQL') {
           return ['Description', 'MongoDB', 'MySQL'];
-        } else if (this.selectedTest === 'Embedding vs Referencing') {
+        } else if (this.selectedTest === 'Referencing vs Embedding') {
           return ['Description', 'Referencing', 'Embedding'];
         }
         return ['Description', 'Column 1', 'Column 2']; // Default headers

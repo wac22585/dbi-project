@@ -128,7 +128,7 @@ class MongoItineraryControllerTest
     @Test
     void verifyDeleteItineraryByUuid() throws Exception {
         when(itineraryService.deleteItineraryByUUID(any())).thenReturn(true);
-        mockMvc.perform(MockMvcRequestBuilders.get(path + ITINERARY_PATH + "/delete/" + itineraryId)
+        mockMvc.perform(MockMvcRequestBuilders.delete(path + ITINERARY_PATH + "/delete/" + itineraryId)
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(itineraryDto)))
                 .andDo(print())

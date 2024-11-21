@@ -10,57 +10,66 @@
       <v-data-table
         :headers="headers"
         :items="filteredItineraries"
-        :sort-by="[{ key: 'startDate', order: 'asc'}]" 
+        :sort-by="sortBy"
+        :sort-desc="sortDesc"
         multi-sort
-        item-value="uuid"
-        class="elevation-1"
-        @click:row="onRowClick"
         show-select
-        v-model:selected="selected"
-        v-model:items-per-page="itemsPerPage"
-        v-model:page="page"
-        v-model:items-per-page-options="itemsPerPageOptions"
+        item-key="uuid"
+        class="elevation-1"
+        :items-per-page="itemsPerPage"
+        :items-per-page-options="itemsPerPageOptions"
+        v-model="selected"
       >
         <template v-slot:top>
-          <v-toolbar flat>
-            <v-toolbar-title>Itinerary CRUD</v-toolbar-title>
-            <v-divider class="mx-4" inset vertical></v-divider>
-            <v-spacer></v-spacer>
-            <v-select
-            v-model="filterBy"
-            :items="countries"
-            label="Filter by Country"
-            class="mr-4 mt-5"
-          ></v-select>
-            <v-select
-            v-model="sortBy"
-            :items="headers.map(header => header.value)"
-            label="Sort by"
-            class="mr-5 mt-5"
-          ></v-select>
-          <v-btn @click="toggleSortOrder" class="mr-3">
-            {{ sortDesc ? 'Descending' : 'Ascending' }}
-          </v-btn>
-          <v-btn
-            color="green"
-            variant="tonal"
-            class="mr-3"
-            @click="showCreatePostDialog = !showCreatePostDialog"
-          >
-            Create
-          </v-btn>
-          <v-btn 
-            color="orange"
-            variant="tonal"
-            class="mr-3"
-            @click="updateItem" :disabled="!selected.length">Update</v-btn>
-          <v-btn
-            color="red"
-            variant="tonal"
-            class="mr-3"
-            @click="deleteItem" :disabled="!selected.length">Delete</v-btn>
-          </v-toolbar>
-        </template>
+            <v-toolbar flat>
+              <v-toolbar-title>Itinerary CRUD</v-toolbar-title>
+              <v-divider class="mx-4" inset vertical></v-divider>
+              <v-spacer></v-spacer>
+              <v-select
+              v-model="filterBy"
+              :items="countries"
+              label="Filter by Country"
+              class="mr-4 mt-5"
+            ></v-select>
+              <v-select
+              v-model="sortBy"
+              :items="headers.map(header => header.value)"
+              label="Sort by"
+              class="mr-5 mt-5"
+            ></v-select>
+            <v-btn @click="toggleSortOrder" class="mr-3">
+              {{ sortDesc ? 'Descending' : 'Ascending' }}
+            </v-btn>
+            <v-btn
+              color="green"
+              variant="tonal"
+              class="mr-3"
+              @click="showCreatePostDialog = !showCreatePostDialog"
+            >
+              Create
+            </v-btn>
+            <v-btn 
+              color="orange"
+              variant="tonal"
+              class="mr-3"
+              @click="updateItem" :disabled="!selected.length">Update</v-btn>
+            <v-btn
+              color="red"
+              variant="tonal"
+              class="mr-3"
+              @click="deleteItem" :disabled="!selected.length">Delete</v-btn>
+            </v-toolbar>
+          </template>
+    
+          <template v-slot:item.startDate="{ item }">
+            {{ formatDate(item.startDate) }}
+          </template>
+          <template v-slot:item.endDate="{ item }">
+            {{ formatDate(item.endDate) }}
+          </template>
+          <template v-slot:item.itineraryStepDate="{ item }">
+            {{ formatDate(item.itineraryStepDate) }}
+          </template>
       </v-data-table>
     </v-container>
 
@@ -77,13 +86,7 @@
             <v-date-picker v-model="newItem.endDate" label="End Date" required></v-date-picker>
             <v-text-field v-model="newItem.itinerarySteps[0].name" label="Itinerary Step Name" required></v-text-field>
             <v-date-picker v-model="newItem.itinerarySteps[0].stepDate" label="Itinerary Step Date" required></v-date-picker>
-            <!-- <v-select
-              v-model="newItem.itinerarySteps[0].routeStops[0].currentCity.country"
-              :items="countries"
-              label="Current Country"
-              @change="fetchCities('currentCity')"
-              required
-            ></v-select> -->
+
             <v-select
               v-model="newItem.itinerarySteps[0].routeStops[0].currentCity.country"
               :items="countries"
@@ -133,6 +136,7 @@
         flattenedItineraries: [],
         selected: [],
         headers: [
+          { text: '', value: 'select', sortable: false },
           { text: "Uuid", value: "uuid" },
           { text: "Name", value: "name" },
           { text: "Start Date", value: "startDate" },
@@ -144,8 +148,8 @@
           { text: "Next City", value: "nextCity" },
           { text: "Next Country", value: "nextCountry" },
         ],
-        sortBy: 'startDate',
-        sortDesc: false,
+        sortBy: ['startDate'],
+        sortDesc: [false],
         itemsPerPage: 10,
         page: 1,
         itemsPerPageOptions: [5, 10, 25, 50],
@@ -203,6 +207,24 @@
       }
     },
     methods: {
+      formatDate(date) {
+        if (!date) return '';
+        return new Date(date).toLocaleDateString();
+      },
+      toggleSortOrder() {
+        this.sortDesc[0] = !this.sortDesc[0];
+      },
+      toggleSelection(item) {
+        const index = this.selectedItems.findIndex(selected => selected.id === item.id);
+        if (index === -1) {
+          this.selectedItems.push(item);
+        } else {
+          this.selectedItems.splice(index, 1);
+        }
+      },
+      isSelected(item) {
+        return this.selectedItems.some(selected => selected.id === item.id);
+      },
       async fetchItineraries() {
         try {
           const response = await axios.get('http://localhost:8000/api/mongodb/itinerary/all');
@@ -217,6 +239,7 @@
       flattenItineraries() {
         this.flattenedItineraries = this.itineraries.flatMap(itinerary => 
           itinerary.itinerarySteps.map(step => ({
+            id:itinerary.uuid,
             uuid: itinerary.uuid,
             name: itinerary.name,
             startDate: itinerary.startDate,
@@ -249,7 +272,6 @@
             this.itineraries.push(response.data);
             this.flattenItineraries();
             this.closeCreateDialog();
-            console.log(response.data);
           } catch (error) {
             console.error("Error creating itinerary:", error);
           }
@@ -264,11 +286,7 @@
         }
       },
       async fetchCities(type) {
-        console.log('fetchCities triggered with:', type);
-
         const country = type === 'currentCity' ? this.newItem.itinerarySteps[0].routeStops[0].currentCity.country : this.newItem.itinerarySteps[0].routeStops[0].nextCity.country;
-
-        console.log(`Fetching cities for ${type} in country:`, country);
 
         if (!country) {
           console.error("No country selected for", type);
@@ -276,8 +294,6 @@
         }
         try {
           const response = await axios.post('https://countriesnow.space/api/v0.1/countries/cities', { country });
-          console.log(response);
-          console.log(this.newItem.itinerarySteps[0].routeStops[0]);
           if (type === 'currentCity') {
             this.currentCityCities = response.data.data;
           } else {
@@ -301,21 +317,28 @@
       },
       async deleteItem() {
         if (this.selected.length === 0) {
-        console.error("No item selected for deletion");
-        return;
+          console.error('No item selected for deletion');
+          return;
         }
-        const itemToDelete = this.selected[0];
+        const selectedUuid = this.selected[0];
         try {
-          const response = await axios.get(`http://localhost:8000/api/mongodb/itinerary/delete/${itemToDelete.uuid}`);
+          const response = await axios.delete(
+            `http://localhost:8000/api/mongodb/itinerary/delete/${selectedUuid}`
+          );
           if (response.status === 200) {
-            const index = this.itineraries.findIndex(itinerary => itinerary.uuid === itemToDelete.uuid);
+            const index = this.itineraries.findIndex(
+              (itinerary) => itinerary.uuid === selectedUuid
+            );
             if (index !== -1) {
               this.itineraries.splice(index, 1);
               this.flattenItineraries();
+              this.selected = [];
             }
+          } else {
+            console.error('Failed to delete item:', response.statusText);
           }
         } catch (error) {
-          console.error("Error deleting itinerary:", error);
+          console.error('Error deleting itinerary:', error);
         }
       }
     },

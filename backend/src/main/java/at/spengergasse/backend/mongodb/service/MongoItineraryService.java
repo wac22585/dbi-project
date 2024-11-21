@@ -26,7 +26,7 @@ public class MongoItineraryService
             Itinerary save = ItineraryDto.toEntity(itinerary);
             save.setUuid(UUID.randomUUID());
             itineraryRepository.save(save);
-            return Optional.of(itinerary);
+            return Optional.of(ItineraryDto.fromEntity(save));
         } catch (Exception e) {
             return Optional.empty();
         }
