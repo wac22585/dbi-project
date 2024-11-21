@@ -38,7 +38,7 @@ public class MongoItineraryController
         return ResponseEntity.ok(itineraryService.findAllItineraries());
     }
 
-    @GetMapping(value = "/delete/{uuid}", produces = "application/json")
+    @DeleteMapping(value = "/delete/{uuid}", produces = "application/json")
     public ResponseEntity<ItineraryDto> deleteItineraryByUuid(@PathVariable UUID uuid) {
         boolean deleted = itineraryService.deleteItineraryByUUID(uuid);
         return deleted ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();

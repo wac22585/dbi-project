@@ -55,6 +55,7 @@
 
 <script>
 import axios from 'axios';
+import { mapActions } from 'vuex';
 
   export default {
     data() {
@@ -89,6 +90,7 @@ import axios from 'axios';
       },
     },
     methods: {
+      ...mapActions(['updateBenchmarkResults']),
       async runBenchmark() {
         this.loading = true;
         this.results = [];
@@ -98,6 +100,16 @@ import axios from 'axios';
           const response = await axios.get('http://localhost:8000/api/performance/benchmarks');
           this.results = response.data;
           console.log('API Response:', response.data);
+          // Update Vuex store with benchmark results
+          this.updateBenchmarkResults(this.results);
+
+          const timestamp = new Date().toISOString(); // Generate timestamp
+
+          // Navigate to ResultsView with results and timestamp
+          this.$router.push({
+          path: '/ResultsView',
+          state: { results: this.results, timestamp },
+      });
         } catch (error) {
           this.error = 'Failed to run benchmark';
           console.error(error);
