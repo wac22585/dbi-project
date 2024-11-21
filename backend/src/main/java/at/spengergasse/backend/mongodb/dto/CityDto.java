@@ -2,8 +2,6 @@ package at.spengergasse.backend.mongodb.dto;
 
 import at.spengergasse.backend.mongodb.model.City;
 
-import java.util.List;
-
 public record CityDto(
         String city,
         String country

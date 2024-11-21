@@ -9,6 +9,5 @@ public interface JpaCityRepository extends Repository<City, Long>
     City findById(Long id);
     City findByCity(String city);
     void deleteById(Long id);
-
     void deleteAll();
 }

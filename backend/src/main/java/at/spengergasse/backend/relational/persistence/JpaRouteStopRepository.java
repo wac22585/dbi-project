@@ -11,7 +11,6 @@ public interface JpaRouteStopRepository extends Repository<RouteStop, Long>
     RouteStop findById(Long id);
     void deleteById(Long id);
     void deleteAll();
-
     List<RouteStop> findByItineraryStepId(Long id);
     List<RouteStop> findAll();
 }

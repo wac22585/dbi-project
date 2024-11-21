@@ -1,7 +1,6 @@
 package at.spengergasse.backend.mongodb.dto;
 
 import at.spengergasse.backend.mongodb.model.ItineraryStep;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

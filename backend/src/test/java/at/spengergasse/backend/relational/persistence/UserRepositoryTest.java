@@ -100,6 +100,6 @@ class UserRepositoryTest
         User user = this.user;
         user = userRepository.save(user);
 
-        assertThat(userRepository.findByUsername(user.getUsername())).isInstanceOf(UserWithItineraryNames.class);
+        assertThat(userRepository.findUserByUsername(user.getUsername())).isInstanceOf(UserWithItineraryNames.class);
     }
 }

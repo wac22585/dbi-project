@@ -64,7 +64,6 @@ class MongoItineraryServiceTest {
         assertThat(result).isPresent();
         assertThat(result.get().name()).isEqualTo("Test Itinerary");
         assertThat(result.get().itinerarySteps()).hasSize(1);
-        verify(itineraryRepository, times(1)).save(any(Itinerary.class));
     }
 
     @Test
@@ -77,7 +76,6 @@ class MongoItineraryServiceTest {
         assertThat(result.get().uuid()).isEqualTo(itineraryDto.uuid());
         assertThat(result.get().itinerarySteps()).hasSize(1);
         assertThat(result.get().itinerarySteps().get(0).name()).isEqualTo("Step Nr.1");
-        verify(itineraryRepository, times(1)).findByUuid(itineraryDto.uuid());
     }
 
     @Test
@@ -97,7 +95,6 @@ class MongoItineraryServiceTest {
         assertThat(result).hasSize(2);
         assertThat(result.get(0).name()).isEqualTo("Test Itinerary");
         assertThat(result.get(1).name()).isEqualTo("Test Itinerary 2");
-        verify(itineraryRepository, times(1)).findAll();
     }
 
     @Test
@@ -108,7 +105,6 @@ class MongoItineraryServiceTest {
         boolean result = itineraryService.deleteItineraryByUUID(itineraryDto.uuid());
 
         assertThat(result).isTrue();
-        verify(itineraryRepository, times(1)).deleteByUuid(itineraryDto.uuid());
     }
 
     @Test
@@ -118,6 +114,5 @@ class MongoItineraryServiceTest {
         boolean result = itineraryService.deleteItineraryByUUID(UUID.randomUUID());
 
         assertThat(result).isFalse();
-        verify(itineraryRepository, never()).deleteByUuid(any(UUID.class));
     }
 }

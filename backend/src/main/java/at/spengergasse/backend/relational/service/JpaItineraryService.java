@@ -21,12 +21,6 @@ public class JpaItineraryService {
 
     private final JpaItineraryRepository itineraryRepository;
 
-    /**
-     * Create an itinerary
-     *
-     * @param itinerary the itinerary to save
-     * @return the saved itinerary
-     */
     public Optional<ItineraryDto> saveItinerary(ItineraryDto itinerary) {
         if (itinerary == null) return Optional.empty();
 
@@ -74,12 +68,6 @@ public class JpaItineraryService {
         }
     }
 
-
-    /**
-     * Delete an itinerary by its ID
-     *
-     * @param uuid the ID of the itinerary to delete
-     */
     public boolean deleteItineraryByUUID(UUID uuid) {
         try {
             itineraryRepository.deleteByUuid(uuid);
@@ -102,13 +90,6 @@ public class JpaItineraryService {
         }
     }
 
-
-    /**
-     * Retrieve an itinerary by its ID
-     *
-     * @param id the UUID of the itinerary
-     * @return an Optional containing the found itinerary, or empty if not found
-     */
     public Optional<ItineraryDto> findItineraryUUID(UUID id) {
         if (id == null) return Optional.empty();
 
@@ -119,34 +100,16 @@ public class JpaItineraryService {
         }
     }
 
-    /**
-     * Retrieve all itineraries
-     *
-     * @return a list of all itineraries
-     */
     public List<ItineraryDto> getAllItineraries() {
         return itineraryRepository.findAll().stream()
                 .map(ItineraryDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Retrieve all itineraries for a specific user by user ID
-     *
-     * @param user the user to retrieve itineraries for
-     * @return a list of itineraries associated with the user
-     */
     public List<Itinerary> getItinerariesByUser(User user) {
         return itineraryRepository.findAllByUser(user);
     }
 
-    /**
-     * Update the user associated with an itinerary
-     *
-     * @param itineraryId the UUID of the itinerary
-     * @param user        the user to associate with the itinerary
-     * @return an Optional containing the updated itinerary, or empty if not found
-     */
     public Optional<ItineraryDto> updateItineraryUser(UUID itineraryId, User user) {
         Optional<ItineraryDto> optionalItinerary = findItineraryUUID(itineraryId);
         if (optionalItinerary.isPresent()) {

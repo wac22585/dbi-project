@@ -11,9 +11,6 @@ public interface JpaItineraryStepRepository extends Repository<ItineraryStep, Lo
     ItineraryStep findById(Long id);
     void deleteById(Long id);
     void deleteByItineraryId(Long id);
-
-    List<ItineraryStep> findAllByItineraryId(Long id);
     List<ItineraryStep> findAll();
-
     void deleteAll();
 }

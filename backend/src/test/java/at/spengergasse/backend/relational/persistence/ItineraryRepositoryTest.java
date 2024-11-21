@@ -90,13 +90,6 @@ class ItineraryRepositoryTest
         assertThat(itineraryRepository.findByUuid(itinerary.getUuid())).isNotNull();
     }
 
-    /**
-     * expected: null
-     *  but was: Entity of type at.spengergasse.backend.relational.model.Itinerary with id: 102
-     * Expected :null
-     * Actual   :Entity of type at.spengergasse.backend.relational.model.Itinerary with id: 102
-     * //TODO: Fix this test 110
-     */
     @Test
     void verifyDeleteById()
     {

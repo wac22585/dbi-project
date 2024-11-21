@@ -1,7 +1,6 @@
 package at.spengergasse.backend.mongodb.persistence;
 
 import at.spengergasse.backend.mongodb.model.User;
-import at.spengergasse.backend.mongodb.persistence.UserWithoutPwd;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

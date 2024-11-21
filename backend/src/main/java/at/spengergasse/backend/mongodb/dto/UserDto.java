@@ -1,6 +1,5 @@
 package at.spengergasse.backend.mongodb.dto;
 
-
 import at.spengergasse.backend.mongodb.model.User;
 
 import java.util.ArrayList;
