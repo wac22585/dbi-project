@@ -1,6 +1,6 @@
 package at.spengergasse.backend.mongodb.persistence;
 
-import at.spengergasse.backend.mongodb.model.User;
+import at.spengergasse.backend.mongodb.model.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,6 +33,47 @@ class MongoUserRepositoryTest {
                 .username("johndoe")
                 .email("johndoe@example.com")
                 .password("password123")
+                .itineraries(List.of(
+                        Itinerary.builder()
+                                .uuid(UUID.randomUUID())
+                                .name("European Adventure")
+                                .startDate(LocalDateTime.of(2024, 11, 1, 10, 0))
+                                .endDate(LocalDateTime.of(2024, 11, 15, 18, 0))
+                                .itinerarySteps(List.of(ItineraryStep.builder()
+                                        .name("Step Nr. 1")
+                                        .stepDate(LocalDateTime.of(2024, 11, 1, 10, 0))
+                                        .routeStops(List.of(
+                                                RouteStop.builder()
+                                                        .totalDistance(500f)
+                                                        .arrivalTime(LocalDateTime.of(2024, 11, 1, 10, 0))
+                                                        .currentCity(City.builder()
+                                                                .city("Vienna")
+                                                                .country("Austria")
+                                                                .build())
+                                                        .nextCity(City.builder()
+                                                                .city("Bratislava")
+                                                                .country("Slovakia")
+                                                                .build())
+                                                        .build()))
+                                        .build(),
+                                        ItineraryStep.builder()
+                                                .name("Step Nr. 2")
+                                                .stepDate(LocalDateTime.of(2024, 11, 2, 10, 0))
+                                                .routeStops(List.of(
+                                                        RouteStop.builder()
+                                                                .totalDistance(1000f)
+                                                                .arrivalTime(LocalDateTime.of(2024, 11, 2, 10, 0))
+                                                                .currentCity(City.builder()
+                                                                        .city("Bratislava")
+                                                                        .country("Slovakia")
+                                                                        .build())
+                                                                .nextCity(City.builder()
+                                                                        .city("Budapest")
+                                                                        .country("Hungary")
+                                                                        .build())
+                                                                .build()))
+                                                .build()))
+                                .build()))
                 .build();
     }
 
