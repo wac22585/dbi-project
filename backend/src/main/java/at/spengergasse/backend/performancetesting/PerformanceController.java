@@ -24,9 +24,13 @@ public class PerformanceController
     private final JpaItineraryRepository jpaItineraryRepository;
     private final DatabaseSeeder databaseSeeder;
 
-    @GetMapping(value = "/crud", produces = "application/json")
-    public Map<String, Long> crudPerformance(@RequestParam int size)
+    @GetMapping(value = "/benchmarks", produces = "application/json")
+    public Map<String, List<Long>> benchmarks()
     {
-        return databaseSeeder.seedAndBenchmarkDatabase(mongoUserRepository, jpaUserRepository, mongoItineraryRepository, jpaItineraryRepository, size);
+        return databaseSeeder.seedAndBenchmarkDatabase(
+                mongoUserRepository,
+                jpaUserRepository,
+                mongoItineraryRepository,
+                jpaItineraryRepository);
     }
 }

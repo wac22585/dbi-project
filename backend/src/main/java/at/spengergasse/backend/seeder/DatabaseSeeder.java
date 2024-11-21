@@ -36,38 +36,38 @@ public class DatabaseSeeder
         long startTime = System.nanoTime();
         operation.run();
         long endTime = System.nanoTime();
-        return endTime - startTime;
+        return TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
     }
 
-    public static List<at.spengergasse.backend.mongodb.model.User> generateMongoUserTestData(int size)
+    public static List<at.spengergasse.backend.mongodb.model.User> generateMongoUserTestData(int size, String prefix)
     {
         List<at.spengergasse.backend.mongodb.model.User> users = new ArrayList<>();
         for (int i = 0; i < size; i++)
         {
             users.add(at.spengergasse.backend.mongodb.model.User.builder()
-                    .username("username" + i)
-                    .email("email" + i)
+                    .username(prefix + "username" + i)
+                    .email(prefix + "email" + i)
                     .password("password")
                     .build());
         }
         return users;
     }
 
-    public static List<at.spengergasse.backend.relational.model.User> generateRelationalUserTestData(int size)
+    public static List<at.spengergasse.backend.relational.model.User> generateRelationalUserTestData(int size, String prefix)
     {
         List<at.spengergasse.backend.relational.model.User> users = new ArrayList<>();
         for (int i = 0; i < size; i++)
         {
             users.add(User.builder()
-                    .username("username" + i)
-                    .email("email" + i)
+                    .username(prefix + "username" + i)
+                    .email(prefix + "email" + i)
                     .password("password")
                     .build());
         }
         return users;
     }
 
-    public static List<at.spengergasse.backend.mongodb.model.Itinerary> generateMongoItineraryTestData(int size)
+    public static List<at.spengergasse.backend.mongodb.model.Itinerary> generateMongoItineraryTestData(int size, String prefix)
     {
         List<at.spengergasse.backend.mongodb.model.Itinerary> itineraries = new ArrayList<>();
         for (int i = 0; i < size; i++)
@@ -86,7 +86,7 @@ public class DatabaseSeeder
         return itineraries;
     }
 
-    public static List<at.spengergasse.backend.relational.model.Itinerary> generateRelationalItineraryTestData(int size)
+    public static List<at.spengergasse.backend.relational.model.Itinerary> generateRelationalItineraryTestData(int size, String prefix)
     {
         List<at.spengergasse.backend.relational.model.Itinerary> itineraries = new ArrayList<>();
         for (int i = 0; i < size; i++) {
@@ -109,75 +109,84 @@ public class DatabaseSeeder
         return itineraries;
     }
 //FIXME: This method is not complete Itineraries are not being created yet
-    public Map<String, Long> seedAndBenchmarkDatabase(
+    public Map<String, List<Long>> seedAndBenchmarkDatabase(
             MongoUserRepository mongoUserRepository,
             JpaUserRepository jpaUserRepository,
             MongoItineraryRepository mongoItineraryRepository,
-            JpaItineraryRepository jpaItineraryRepository,
-            int size)
+            JpaItineraryRepository jpaItineraryRepository)
     {
         mongoUserRepository.deleteAll();
         jpaUserRepository.deleteAll();
         mongoItineraryRepository.deleteAll();
         jpaItineraryRepository.deleteAll();
 
-        Map<String, Long> results = new HashMap<>();
+        Map<String, List<Long>> results = new HashMap<>();
 
-        List<at.spengergasse.backend.mongodb.model.User> mongoUsers = generateMongoUserTestData(size);
-        List<at.spengergasse.backend.relational.model.User> jpaUsers = generateRelationalUserTestData(size);
+        //Create 100 Users
+        List<at.spengergasse.backend.mongodb.model.User> mongoUsers100 = generateMongoUserTestData(100, "User100");
+        List<at.spengergasse.backend.relational.model.User> jpaUsers100 = generateRelationalUserTestData(100, "User100");
 
-        List<at.spengergasse.backend.mongodb.model.Itinerary> mongoItineraries = generateMongoItineraryTestData(size);
-        List<at.spengergasse.backend.relational.model.Itinerary> jpaItineraries = generateRelationalItineraryTestData(size);
+        //Create 1000 Users
+        List<at.spengergasse.backend.mongodb.model.User> mongoUsers1000 = generateMongoUserTestData(1000, "User1000");
+        List<at.spengergasse.backend.relational.model.User> jpaUsers1000 = generateRelationalUserTestData(1000, "User1000");
 
-        //Create
-        long mongoCreate = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers));
-        results.put("CREATE MongoDB", TimeUnit.NANOSECONDS.toMillis(mongoCreate));
+        //Create 10000 Users
+        List<at.spengergasse.backend.mongodb.model.User> mongoUsers10000 = generateMongoUserTestData(10000, "User10000");
+        List<at.spengergasse.backend.relational.model.User> jpaUsers10000 = generateRelationalUserTestData(10000, "User10000");
 
-        long jpaCreate = benchmarkOperation(() -> jpaUserRepository.saveAll(jpaUsers));
-        results.put("CREATE JPA", TimeUnit.NANOSECONDS.toMillis(jpaCreate));
+        // List<at.spengergasse.backend.mongodb.model.Itinerary> mongoItineraries = generateMongoItineraryTestData(size);
+        // List<at.spengergasse.backend.relational.model.Itinerary> jpaItineraries = generateRelationalItineraryTestData(size);
 
-        //Update
-        long mongoUpdate = benchmarkOperation(() -> mongoUserService.updateUserName("username0", "newUsername0"));
-        results.put("UPDATE MongoDB", TimeUnit.NANOSECONDS.toMillis(mongoUpdate));
+        //Create Mongo Users
+        long mongoCreate100 = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers100));
+        long mongoCreate1000 = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers1000));
+        long mongoCreate10000 = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers10000));
+        //Create JPA Users
+        long jpaCreate100 = benchmarkOperation(() -> jpaUserRepository.saveAll(jpaUsers100));
+        long jpaCreate1000 = benchmarkOperation(() -> jpaUserRepository.saveAll(jpaUsers1000));
+        long jpaCreate10000 = benchmarkOperation(() -> jpaUserRepository.saveAll(jpaUsers10000));
 
-        long jpaUpdate = benchmarkOperation(() -> jpaUserService.updateUserName("username0", "newUsername0"));
-        results.put("UPDATE JPA", TimeUnit.NANOSECONDS.toMillis(jpaUpdate));
+        results.put("Create 100", List.of(mongoCreate100, jpaCreate100));
+        results.put("Create 1000", List.of(mongoCreate1000, jpaCreate1000));
+        results.put("Create 10000", List.of(mongoCreate10000, jpaCreate10000));
 
-        //Delete
-        long mongoDelete = benchmarkOperation(mongoUserRepository::deleteAll);
-        results.put("MongoDB DELETE", TimeUnit.NANOSECONDS.toMillis(mongoDelete));
+        System.out.println("Size: " + mongoUserRepository.findAll().size());
 
-        long jpaDelete = benchmarkOperation(jpaUserRepository::deleteAll);
-        results.put("JPA DELETE", TimeUnit.NANOSECONDS.toMillis(jpaDelete));
-
-        //Find All
+        //Find without filter
         long mongoFindAll = benchmarkOperation(mongoUserRepository::findAll);
-        results.put("MongoDB FIND ALL", TimeUnit.NANOSECONDS.toMillis(mongoFindAll));
-
         long jpaFindAll = benchmarkOperation(jpaUserRepository::findAll);
-        results.put("JPA FIND ALL", TimeUnit.NANOSECONDS.toMillis(jpaFindAll));
 
-        //Find By Username
-        long mongoFindByUsername = benchmarkOperation(() -> mongoUserRepository.findByUsername("username0"));
-        results.put("MongoDB FIND BY USERNAME", TimeUnit.NANOSECONDS.toMillis(mongoFindByUsername));
+        results.put("Find all", List.of(mongoFindAll, jpaFindAll));
 
-        long jpaFindByUsername = benchmarkOperation(() -> jpaUserRepository.findByUsername("username0"));
-        results.put("JPA FIND BY USERNAME", TimeUnit.NANOSECONDS.toMillis(jpaFindByUsername));
+        //Find with filter
+        long mongoFindByUsername = benchmarkOperation(() -> mongoUserRepository.findByUsername("User1000username0"));
+        long jpaFindByUsername = benchmarkOperation(() -> jpaUserRepository.findByUsername("User1000username0"));
 
-        //Find by Email Project Username and Email
-        long mongoFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> mongoUserRepository.findUserByEmail("email0"));
-        results.put("MongoDB FIND BY EMAIL PROJECT USERNAME AND EMAIL", TimeUnit.NANOSECONDS.toMillis(mongoFindByEmailProjectUsernameAndEmail));
+        results.put("Find with filter", List.of(mongoFindByUsername, jpaFindByUsername));
 
-        long jpaFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> jpaUserRepository.findByEmail("email0"));
-        results.put("JPA FIND BY EMAIL PROJECT USERNAME AND EMAIL", TimeUnit.NANOSECONDS.toMillis(jpaFindByEmailProjectUsernameAndEmail));
+        //Find with filter and projection
+        long mongoFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> mongoUserRepository.findUserByEmail("User1000email0"));
+        long jpaFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> jpaUserRepository.findByEmail("User1000email0"));
 
-        //Find by Username "Max" project Username and Itinerary Names and Sort by CreatedAt
-        long mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findByUsername("username0"));
-        long mongoCreateItineraries = benchmarkOperation(() -> mongoUserRepository.saveAll(mongoUsers));
-        long mongoFindByUserProjectUsernameAndItineraryNameAndSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findByUsername("username0"));
-        //FIXME: FUNKTIONIERT NICHT :(
-        long jpaFindByUsernameProjectUsernameAndItineraryNameSortByCreatedAt = benchmarkOperation(() -> jpaUserRepository.findUserByUsername("username7"));
-        results.put("JPA FIND BY USERNAME PROJECT USERNAME, EMAIL AND ITINERARIES AND SORT BY CREATED AT", TimeUnit.NANOSECONDS.toMillis(jpaFindByUsernameProjectUsernameAndItineraryNameSortByCreatedAt));
+        results.put("Find with filter and projection", List.of(mongoFindByEmailProjectUsernameAndEmail, jpaFindByEmailProjectUsernameAndEmail));
+
+        //Find with filter and projection and sort
+        //long mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findByUsername("User1000username0"));
+        //long jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> jpaUserRepository.findByUsername("User1000username0"));
+
+        //results.put("Find with filter and projection and sort", List.of(mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt, jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt));
+
+        //Update User
+        long mongoUpdate = benchmarkOperation(() -> mongoUserService.updateUserName("User1000username0", "newUsername0"));
+        long jpaUpdate = benchmarkOperation(() -> jpaUserService.updateUserName("User1000username0", "newUsername0"));
+
+        results.put("Update", List.of(mongoUpdate, jpaUpdate));
+
+        //Delete all Users
+        long mongoDelete = benchmarkOperation(mongoUserRepository::deleteAll);
+        long jpaDelete = benchmarkOperation(jpaUserRepository::deleteAll);
+
+        results.put("Delete", List.of(mongoDelete, jpaDelete));
 
         return results;
     }

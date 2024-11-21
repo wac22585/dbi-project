@@ -22,24 +22,24 @@
             <v-card>
               <v-card-title>Ergebnisse</v-card-title>
                 <v-card-text>
-                  <v-simple-table>
+                  <v-table>
                     <template v-slot:default>
                       <thead>
                         <tr>
-                          <th class="table-header">Operation</th>
-                          <th class="table-header">Count</th>
-                          <th class="table-header">Duration (ms)</th>
+                          <th class="table-header">Description</th>
+                          <th class="table-header">MongoDB</th>
+                          <th class="table-header">MySQL</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(result, index) in results" :key="index">
-                          <td class="table-cell">{{ result.operation }}</td>
-                          <td class="table-cell">{{ result.count }}</td>
-                          <td class="table-cell">{{ result.duration }}</td>
+                        <tr v-for="(result, description) in formattedResults" :key="description">
+                          <td class="table-cell">{{ description }}</td>
+                          <td class="table-cell">{{ formatTime(result[0]) }}</td>
+                          <td class="table-cell">{{ formatTime(result[1]) }}</td>
                         </tr>
                       </tbody>
                     </template>
-                  </v-simple-table>
+                  </v-table>
                 </v-card-text>
             </v-card>
           </v-col>
@@ -61,10 +61,31 @@ import axios from 'axios';
       return {
         selectedDatabase: 'mysql',
         databases: ['mysql', 'mongodb'],
-        results: [],
+        results: {},
         error: null,
-        loading: false,      
-        };
+        loading: false,  
+        orderedDescriptions: [
+          "Create 100",
+          "Create 1000",
+          "Create 10000",
+          "Find all",
+          "Find with filter",
+          "Find with filter and projection",
+          "Update",
+          "Delete",
+        ],    
+      };
+    },
+    computed: {
+      formattedResults() {
+        const sortedResults = {};
+        this.orderedDescriptions.forEach((description) => {
+          if (this.results[description]) {
+            sortedResults[description] = this.results[description];
+          }
+        });
+        return sortedResults;
+      },
     },
     methods: {
       async runBenchmark() {
@@ -72,27 +93,24 @@ import axios from 'axios';
         this.results = [];
         this.error = null;
 
-      const counts = [100, 1000, 10000];
-      for (const count of counts) {
         try {
-          const response = await axios.get(`http://localhost:8000/api/performance/crud?size=${count}`);
-
-          console.log('API Response:', response.data); // Debug API response
-
-          Object.entries(response.data).forEach(([operation, duration]) => {
-          this.results.push({
-            operation,
-            count,
-            duration,
-            });
-          });
+          const response = await axios.get('http://localhost:8000/api/performance/benchmarks');
+          this.results = response.data;
+          console.log('API Response:', response.data);
         } catch (error) {
           this.error = 'Failed to run benchmark';
-        console.error(error);
-        }
-      }
-      
+          console.error(error);
+        }      
+
       this.loading = false;
+      },
+      formatTime(timeInMs) {
+        if (timeInMs >= 1000) {
+          const seconds = Math.floor(timeInMs / 1000);
+          const milliseconds = timeInMs % 1000;
+          return `${seconds}s${milliseconds}ms`;
+        }
+        return `${timeInMs}ms`;
       },
     },
   };
