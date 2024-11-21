@@ -1,12 +1,12 @@
-package at.spengergasse.backend.mongodb.persistence;
+package at.spengergasse.backend.mongodb.persistenceRef;
 
-import at.spengergasse.backend.mongodb.model.RouteStop;
+import at.spengergasse.backend.mongodb.modelRef.RouteStop;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface MongoRouteStopRepository extends MongoRepository<RouteStop, String> {
+public interface MongoRouteStopRefRepository extends MongoRepository<RouteStop, String> {
 
     List<RouteStop> findAll();
     Optional<RouteStop> findById(String id);

@@ -24,7 +24,7 @@ public class PerformanceController
     private final JpaItineraryRepository jpaItineraryRepository;
     private final DatabaseSeeder databaseSeeder;
 
-    @GetMapping(value = "/benchmarks", produces = "application/json")
+    @GetMapping(value = "/benchmarks-mongo-sql", produces = "application/json")
     public Map<String, List<Long>> benchmarks()
     {
         return databaseSeeder.seedAndBenchmarkDatabase(

@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableMongoRepositories(
-        basePackages = "at.spengergasse.backend.mongodb.persistence"
+        basePackages = {"at.spengergasse.backend.mongodb.persistenceRef", "at.spengergasse.backend.mongodb.persistence"}
 )
 public class MongoConfig { }
