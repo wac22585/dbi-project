@@ -17,20 +17,17 @@ import java.util.*;
 public class PerformanceController
 {
     public static final String PERFORMANCE_PATH = "api/performance";
-
-    private final MongoUserRepository mongoUserRepository;
-    private final JpaUserRepository jpaUserRepository;
-    private final MongoItineraryRepository mongoItineraryRepository;
-    private final JpaItineraryRepository jpaItineraryRepository;
     private final DatabaseSeeder databaseSeeder;
 
     @GetMapping(value = "/benchmarks-mongo-sql", produces = "application/json")
     public Map<String, List<Long>> benchmarks()
     {
-        return databaseSeeder.seedAndBenchmarkDatabase(
-                mongoUserRepository,
-                jpaUserRepository,
-                mongoItineraryRepository,
-                jpaItineraryRepository);
+        return databaseSeeder.benchmarks();
+    }
+
+    @GetMapping(value = "/benchmarks-embedding-referencing", produces = "application/json")
+    public Map<String, List<Long>> benchmarksRef()
+    {
+       return databaseSeeder.benchmarksRef();
     }
 }

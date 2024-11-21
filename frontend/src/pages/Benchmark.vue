@@ -12,7 +12,7 @@
       <v-card-text>
         <v-row>
           <v-col cols="12" sm="6">
-            <v-select :items="databases" label="Datenbank auswählen" v-model="selectedDatabase"></v-select>
+            <v-select :items="tests" label="Test auswählen" v-model="selectedTest"></v-select>
           </v-col>
         </v-row>
         <v-btn class="mb-4" @click="runBenchmark" :loading="loading" :disabled="loading">Benchmark starten</v-btn>
@@ -26,9 +26,9 @@
                     <template v-slot:default>
                       <thead>
                         <tr>
-                          <th class="table-header">Description</th>
-                          <th class="table-header">MongoDB</th>
-                          <th class="table-header">MySQL</th>
+                          <th class="table-header">{{ columnHeaders[0] }}</th>
+                          <th class="table-header">{{ columnHeaders[1] }}</th>
+                          <th class="table-header">{{ columnHeaders[2] }}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -59,8 +59,8 @@ import axios from 'axios';
   export default {
     data() {
       return {
-        selectedDatabase: 'mysql',
-        databases: ['mysql', 'mongodb'],
+        selectedTest: 'MongoDb vs MySQL',
+        tests: ['MongoDb vs MySQL', 'Embedding vs Referencing'],
         results: {},
         error: null,
         loading: false,  
@@ -87,6 +87,14 @@ import axios from 'axios';
         });
         return sortedResults;
       },
+      columnHeaders() {
+        if (this.selectedTest === 'MongoDb vs MySQL') {
+          return ['Description', 'MongoDB', 'MySQL'];
+        } else if (this.selectedTest === 'Embedding vs Referencing') {
+          return ['Description', 'Referencing', 'Embedding'];
+        }
+        return ['Description', 'Column 1', 'Column 2']; // Default headers
+      },
     },
     methods: {
       async runBenchmark() {
@@ -94,14 +102,21 @@ import axios from 'axios';
         this.results = [];
         this.error = null;
 
+        console.log("hello:",  this.selectedTest)
+
         try {
-          const response = await axios.get('http://localhost:8000/api/performance/benchmarks');
+          let response;
+          if (this.selectedTest === 'MongoDb vs MySQL') {
+            response = await axios.get('http://localhost:8000/api/performance/benchmarks-mongo-sql');
+          } else {
+            response = await axios.get('http://localhost:8000/api/performance/benchmarks-embedding-referencing');
+          }
           this.results = response.data;
           console.log('API Response:', response.data);
-        } catch (error) {
+        } catch(error) {
           this.error = 'Failed to run benchmark';
           console.error(error);
-        }      
+        }    
 
       this.loading = false;
       },
