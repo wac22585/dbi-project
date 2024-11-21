@@ -1,4 +1,4 @@
-package at.spengergasse.backend.mongodb.persistence;
+package at.spengergasse.backend.mongodb.persistenceRef;
 
 public interface UserWithoutPwd
 {

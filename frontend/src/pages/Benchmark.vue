@@ -12,7 +12,7 @@
       <v-card-text>
         <v-row>
           <v-col cols="12" sm="6">
-            <v-select :items="databases" label="Datenbank auswählen" v-model="selectedDatabase"></v-select>
+            <v-select :items="tests" label="Test auswählen" v-model="selectedTest"></v-select>
           </v-col>
         </v-row>
         <v-btn class="mb-4" @click="runBenchmark" :loading="loading" :disabled="loading">Benchmark starten</v-btn>
@@ -26,9 +26,9 @@
                     <template v-slot:default>
                       <thead>
                         <tr>
-                          <th class="table-header">Description</th>
-                          <th class="table-header">MongoDB</th>
-                          <th class="table-header">MySQL</th>
+                          <th class="table-header">{{ columnHeaders[0] }}</th>
+                          <th class="table-header">{{ columnHeaders[1] }}</th>
+                          <th class="table-header">{{ columnHeaders[2] }}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -60,11 +60,11 @@ import { mapActions } from 'vuex';
   export default {
     data() {
       return {
-        selectedDatabase: 'mysql',
-        databases: ['mysql', 'mongodb'],
+        selectedTest: 'MongoDb vs MySQL',
+        tests: ['MongoDb vs MySQL', 'Embedding vs Referencing'],
         results: {},
         error: null,
-        loading: false,  
+        loading: false,
         orderedDescriptions: [
           "Create 100",
           "Create 1000",
@@ -75,7 +75,7 @@ import { mapActions } from 'vuex';
           "Find with filter and projection and sort",
           "Update",
           "Delete",
-        ],    
+        ],
       };
     },
     computed: {
@@ -88,6 +88,14 @@ import { mapActions } from 'vuex';
         });
         return sortedResults;
       },
+      columnHeaders() {
+        if (this.selectedTest === 'MongoDb vs MySQL') {
+          return ['Description', 'MongoDB', 'MySQL'];
+        } else if (this.selectedTest === 'Embedding vs Referencing') {
+          return ['Description', 'Referencing', 'Embedding'];
+        }
+        return ['Description', 'Column 1', 'Column 2']; // Default headers
+      },
     },
     methods: {
       ...mapActions(['updateBenchmarkResults']),
@@ -96,8 +104,15 @@ import { mapActions } from 'vuex';
         this.results = [];
         this.error = null;
 
+        console.log("hello:",  this.selectedTest)
+
         try {
-          const response = await axios.get('http://localhost:8000/api/performance/benchmarks');
+          let response;
+          if (this.selectedTest === 'MongoDb vs MySQL') {
+            response = await axios.get('http://localhost:8000/api/performance/benchmarks-mongo-sql');
+          } else {
+            response = await axios.get('http://localhost:8000/api/performance/benchmarks-embedding-referencing');
+          }
           this.results = response.data;
           console.log('API Response:', response.data);
           // Update Vuex store with benchmark results
@@ -107,13 +122,13 @@ import { mapActions } from 'vuex';
 
           // Navigate to ResultsView with results and timestamp
           this.$router.push({
-          path: '/ResultsView',
-          state: { results: this.results, timestamp },
-      });
-        } catch (error) {
+            path: '/ResultsView',
+            state: { results: this.results, timestamp },
+          });
+        } catch(error) {
           this.error = 'Failed to run benchmark';
           console.error(error);
-        }      
+        }
 
       this.loading = false;
       },

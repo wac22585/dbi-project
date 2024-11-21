@@ -190,6 +190,7 @@
       async fetchItineraries() {
         try {
           const response = await axios.get('http://localhost:8000/api/mongodb/itinerary/all');
+          console.log(response.data);
           this.itineraries = response.data;
           this.flattenItineraries();
           console.log(this.itineraries)
