@@ -9,7 +9,7 @@
     <v-container class="mt-15 mt-15">
       <v-data-table
         :headers="headers"
-        :items="flattenedItineraries"
+        :items="filteredItineraries"
         :sort-by="[{ key: 'startDate', order: 'asc'}]" 
         multi-sort
         item-value="uuid"
@@ -27,18 +27,24 @@
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-select
+            v-model="filterBy"
+            :items="countries"
+            label="Filter by Country"
+            class="mr-4 mt-5"
+          ></v-select>
+            <v-select
             v-model="sortBy"
             :items="headers.map(header => header.value)"
             label="Sort by"
-            class="mr-4"
+            class="mr-5 mt-5"
           ></v-select>
-          <v-btn @click="toggleSortOrder">
+          <v-btn @click="toggleSortOrder" class="mr-3">
             {{ sortDesc ? 'Descending' : 'Ascending' }}
           </v-btn>
           <v-btn
             color="green"
             variant="tonal"
-            class="mb-2"
+            class="mr-3"
             @click="showCreatePostDialog = !showCreatePostDialog"
           >
             Create
@@ -46,12 +52,12 @@
           <v-btn 
             color="orange"
             variant="tonal"
-            class="mb-2"
+            class="mr-3"
             @click="updateItem" :disabled="!selected.length">Update</v-btn>
           <v-btn
             color="red"
             variant="tonal"
-            class="mb-2"
+            class="mr-3"
             @click="deleteItem" :disabled="!selected.length">Delete</v-btn>
           </v-toolbar>
         </template>
@@ -185,6 +191,16 @@
           { text: "Next Country", value: "nextCountry" },
         ],
       };
+    },
+    computed: {
+      filteredItineraries() {
+        if (!this.filterBy) {
+          return this.flattenedItineraries;
+        }
+        return this.flattenedItineraries.filter(itinerary => 
+          itinerary.currentCountry === this.filterBy || itinerary.nextCountry === this.filterBy
+        );
+      }
     },
     methods: {
       async fetchItineraries() {

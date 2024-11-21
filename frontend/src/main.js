@@ -14,7 +14,7 @@ import App from './App.vue'
 import { createApp } from 'vue'
 
 // Vuex Store
-import store from './store/store.js'
+import store from './store/store,js'
 
 const app = createApp(App).use(store)
 

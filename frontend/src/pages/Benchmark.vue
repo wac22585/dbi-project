@@ -106,6 +106,16 @@ import { mapActions } from 'vuex';
 
         console.log("hello:",  this.selectedTest)
 
+        // this.updateBenchmarkResults(this.results);
+
+          // const timestamp = new Date().toISOString(); // Generate timestamp
+
+          // // Navigate to ResultsView with results and timestamp
+          // this.$router.push({
+          //   path: '/ResultsView',
+          //   state: { results: this.results, timestamp },
+          // });
+
         try {
           let response;
           if (this.selectedTest === 'MongoDb vs MySQL') {
@@ -116,15 +126,6 @@ import { mapActions } from 'vuex';
           this.results = response.data;
           console.log('API Response:', response.data);
           // Update Vuex store with benchmark results
-          this.updateBenchmarkResults(this.results);
-
-          const timestamp = new Date().toISOString(); // Generate timestamp
-
-          // Navigate to ResultsView with results and timestamp
-          this.$router.push({
-            path: '/ResultsView',
-            state: { results: this.results, timestamp },
-          });
         } catch(error) {
           this.error = 'Failed to run benchmark';
           console.error(error);
