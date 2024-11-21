@@ -1,6 +1,7 @@
 package at.spengergasse.backend.mongodb.persistenceRef;
 
-public interface UserWithoutPwd {
+public interface UserWithoutPwd
+{
     String getUsername();
     String getEmail();
 }

@@ -4,11 +4,13 @@ import at.spengergasse.backend.relational.model.Itinerary;
 
 import java.util.List;
 
-public interface UserWithItineraryNames {
+public interface UserWithItineraryNames
+{
     String getUsername();
     List<ItineraryNameOnly> getItineraries();
 
-    interface ItineraryNameOnly {
+    interface ItineraryNameOnly
+    {
         String getName();
     }
 }
