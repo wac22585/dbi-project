@@ -15,7 +15,7 @@
             <v-select :items="databases" label="Datenbank auswählen" v-model="selectedDatabase"></v-select>
           </v-col>
         </v-row>
-        <v-btn @click="runBenchmark" :loading="loading" :disabled="loading">Benchmark starten</v-btn>
+        <v-btn class="mb-4" @click="runBenchmark" :loading="loading" :disabled="loading">Benchmark starten</v-btn>
         <v-divider></v-divider>
         <v-row v-if="results">
           <v-col>
@@ -71,6 +71,7 @@ import axios from 'axios';
           "Find all",
           "Find with filter",
           "Find with filter and projection",
+          "Find with filter and projection and sort",
           "Update",
           "Delete",
         ],    

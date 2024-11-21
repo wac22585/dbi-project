@@ -150,8 +150,6 @@ public class DatabaseSeeder
         results.put("Create 1000", List.of(mongoCreate1000, jpaCreate1000));
         results.put("Create 10000", List.of(mongoCreate10000, jpaCreate10000));
 
-        System.out.println("Size: " + mongoUserRepository.findAll().size());
-
         //Find without filter
         long mongoFindAll = benchmarkOperation(mongoUserRepository::findAll);
         long jpaFindAll = benchmarkOperation(jpaUserRepository::findAll);
@@ -166,15 +164,16 @@ public class DatabaseSeeder
 
         //Find with filter and projection
         long mongoFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> mongoUserRepository.findUserByEmail("User1000email0"));
-        long jpaFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> jpaUserRepository.findByEmail("User1000email0"));
+        long jpaFindByEmailProjectUsernameAndEmail = benchmarkOperation(() -> jpaUserRepository.findUserByEmail("User1000email0"));
 
         results.put("Find with filter and projection", List.of(mongoFindByEmailProjectUsernameAndEmail, jpaFindByEmailProjectUsernameAndEmail));
 
+        //TODO: Fix this
         //Find with filter and projection and sort
-        //long mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findByUsername("User1000username0"));
-        //long jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> jpaUserRepository.findByUsername("User1000username0"));
+        long mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findByUsername("User1000username0"));
+        long jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> jpaUserRepository.findByUsername("User1000username0"));
 
-        //results.put("Find with filter and projection and sort", List.of(mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt, jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt));
+        results.put("Find with filter and projection and sort", List.of(mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt, jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt));
 
         //Update User
         long mongoUpdate = benchmarkOperation(() -> mongoUserService.updateUserName("User1000username0", "newUsername0"));
