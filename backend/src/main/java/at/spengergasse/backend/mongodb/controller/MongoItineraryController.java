@@ -20,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
 @RequestMapping(path = MongoItineraryController.ITINERARY_PATH)
+@CrossOrigin(origins = "http://localhost:3001")
 public class MongoItineraryController
 {
     public static final String ITINERARY_PATH = "api/mongodb/itinerary";
@@ -34,11 +35,19 @@ public class MongoItineraryController
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
+    @CrossOrigin(origins = "http://localhost:3001")
     @GetMapping(value = "/{uuid}", produces = "application/json")
     public ResponseEntity<ItineraryDto> fetchItineraryByUuid(@PathVariable UUID uuid) {
         return itineraryService.findItineraryByUUID(uuid)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping(value = "/update", produces = "application/json")
+    public ResponseEntity<ItineraryDto> updateItinerary(@RequestBody ItineraryDto itineraryDto) {
+        return itineraryService.updateItinerary(itineraryDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @GetMapping(value = "/all", produces = "application/json")

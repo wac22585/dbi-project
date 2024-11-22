@@ -171,10 +171,9 @@ public class DatabaseSeeder
 
         results.put("Find with filter and projection", List.of(mongoFindByEmailProjectUsernameAndEmail, jpaFindByEmailProjectUsernameAndEmail));
 
-        //TODO: Fix this
         //Find with filter and projection and sort
-        long mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findByUsername("User1000username100"));
-        long jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> jpaUserRepository.findByUsername("User1000username100"));
+        long mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findUsersByItinerariesSizeGreaterThanOrderByItinerariesAsc(5));
+        long jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> jpaUserRepository.findUsersByItinerariesSizeGreaterThanOrderByItinerariesAsc(5));
 
         results.put("Find with filter and projection and sort", List.of(mongoFindByUsernameProjectUsernameAndEmailSortByCreatedAt, jpaFindByUsernameProjectUsernameAndEmailSortByCreatedAt));
 
@@ -248,7 +247,11 @@ public class DatabaseSeeder
 
         results.put("Find with filter and projection", List.of(refFindByEmailProjectUsernameAndEmail, embFindByEmailProjectUsernameAndEmail));
 
-        //Filter with projection and sort
+        //Find with filter and projection and sort
+//        long refFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRefRepository.findUsersByItinerariesSizeGreaterThanOrderByItinerariesAsc(2));
+//        long embFindByUsernameProjectUsernameAndEmailSortByCreatedAt = benchmarkOperation(() -> mongoUserRepository.findUsersByItinerariesSizeGreaterThanOrderByItinerariesAsc(2));
+
+//        results.put("Find with filter and projection and sort", List.of(refFindByUsernameProjectUsernameAndEmailSortByCreatedAt, embFindByUsernameProjectUsernameAndEmailSortByCreatedAt));
 
         //Update User
         long refUpdate = benchmarkOperation(() -> mongoUserService.updateUserName("Ref1000username100", "newUsername0"));

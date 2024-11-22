@@ -12,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
 @RequestMapping(path = MongoUserController.USER_PATH)
+@CrossOrigin(origins = "http://localhost:3001")
 public class MongoUserController
 {
     public static final String USER_PATH = "api/mongodb/user";
