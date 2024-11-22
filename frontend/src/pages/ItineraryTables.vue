@@ -6,8 +6,9 @@
       <v-btn text to="/Benchmark">Benchmark</v-btn>
       <v-btn text to="/ResultsView">Results View</v-btn>
     </v-app-bar>
-    <v-container class="mt-15 mt-15">
+    <v-container fluid class="mt-15 mt-15">
       <v-data-table
+       
         :headers="headers"
         :items="filteredItineraries"
         :sort-by="sortBy"
@@ -21,11 +22,7 @@
         v-model="selected"
       >
         <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title>Itinerary CRUD</v-toolbar-title>
-              <v-divider class="mx-4" inset vertical></v-divider>
-              <v-spacer></v-spacer>
-
+            <v-toolbar flat class="pt-4 pl-4">
               <v-select
                 v-model="filterField"
                 :items="headers.map(header => header.value)"
