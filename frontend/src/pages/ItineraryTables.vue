@@ -25,18 +25,23 @@
               <v-toolbar-title>Itinerary CRUD</v-toolbar-title>
               <v-divider class="mx-4" inset vertical></v-divider>
               <v-spacer></v-spacer>
+
               <v-select
-              v-model="filterBy"
-              :items="countries"
-              label="Filter by Country"
-              class="mr-4 mt-5"
-            ></v-select>
-              <v-select
-              v-model="sortBy"
-              :items="headers.map(header => header.value)"
-              label="Sort by"
-              class="mr-5 mt-5"
-            ></v-select>
+                v-model="filterField"
+                :items="headers.map(header => header.value)"
+                label="Filter Field"
+                class="mr-4"
+                outlined
+              ></v-select>
+              <v-text-field
+                v-model="filterValue"
+                label="Filter Value"
+                class="mr-4"
+                outlined
+                @input="applyFilter"
+              ></v-text-field>
+
+              <v-btn @click="clearFilter">Clear Filter</v-btn>
             <v-btn @click="toggleSortOrder" class="mr-3">
               {{ sortDesc ? 'Descending' : 'Ascending' }}
             </v-btn>
@@ -52,12 +57,13 @@
               color="orange"
               variant="tonal"
               class="mr-3"
-              @click="updateItem" :disabled="!selected.length">Update</v-btn>
+              @click="editDialog = !editDialog" 
+              :disabled="!selected.length">Update</v-btn>
             <v-btn
               color="red"
               variant="tonal"
               class="mr-3"
-              @click="deleteItem" :disabled="!selected.length">Delete</v-btn>
+              @click="openDeleteDialog" :disabled="!selected.length">Delete</v-btn>
             </v-toolbar>
           </template>
     
@@ -86,7 +92,6 @@
             <v-date-picker v-model="newItem.endDate" label="End Date" required></v-date-picker>
             <v-text-field v-model="newItem.itinerarySteps[0].name" label="Itinerary Step Name" required></v-text-field>
             <v-date-picker v-model="newItem.itinerarySteps[0].stepDate" label="Itinerary Step Date" required></v-date-picker>
-
             <v-select
               v-model="newItem.itinerarySteps[0].routeStops[0].currentCity.country"
               :items="countries"
@@ -123,6 +128,91 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Edit Dialog -->
+    <v-dialog v-model="editDialog" max-width="900px">
+      <v-card>
+        <v-card-title>Edit Existing Itinerary</v-card-title>
+        <v-card-text>
+          <v-select
+            v-model="selectedItinerary"
+            :items="itineraries"
+            item-title="name"
+            item-value="uuid"
+            label="Select Itinerary to Edit"
+            variant="outlined"
+            @update:modelValue="populateEditForm()"
+            required
+          ></v-select>
+
+          <v-form ref="form">
+          <div v-if="selectedItinerary">
+            <v-text-field v-model="editedItem.name" label="Name" required></v-text-field>
+            <v-date-picker v-model="editedItem.startDate" label="Start Date" required></v-date-picker>
+            <v-date-picker v-model="editedItem.endDate" label="End Date" required></v-date-picker>
+            <v-text-field v-model="editedItem.itinerarySteps[0].name" label="Itinerary Step Name" required></v-text-field>
+            <v-date-picker v-model="editedItem.itinerarySteps[0].stepDate" label="Itinerary Step Date" required></v-date-picker>
+            <v-select
+              v-model="editedItem.itinerarySteps[0].routeStops[0].currentCity.country"
+              :items="countries"
+              label="Current Country"
+              @update:modelValue="fetchCitiesEdit('currentCity')"
+              required
+            ></v-select>
+            <v-select
+              v-model="editedItem.itinerarySteps[0].routeStops[0].currentCity.city"
+              :items="currentCityCities"
+              label="Current City"
+              required
+            ></v-select>
+            <v-select
+              v-model="editedItem.itinerarySteps[0].routeStops[0].nextCity.country"
+              :items="countries"
+              label="Next Country"
+              @update:modelValue="fetchCitiesEdit('nextCity')"
+              required
+            ></v-select>
+            <v-select
+              v-model="editedItem.itinerarySteps[0].routeStops[0].nextCity.city"
+              :items="nextCityCities"
+              label="Next City"
+              required
+            ></v-select>
+          </div>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red" text @click="cancelEdit">Cancel</v-btn>
+          <v-btn color="green" text @click="saveEditedItem">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Delete Confirmation Dialog -->
+    <v-dialog v-model="showDeleteDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue-darken-1" variant="text" @click="closeDeleteDialog">Cancel</v-btn>
+          <v-btn color="blue-darken-1" variant="text" @click="deleteItem">OK</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar
+      v-model="snackbar.show"
+      :timeout="1800"
+    >
+      {{ snackbar.message }}
+      <template v-slot:actions>
+        <v-btn color="primary" variant="text" @click="snackbar.show = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     </v-app>
   </template>
   
@@ -135,6 +225,35 @@
         itineraries: [],
         flattenedItineraries: [],
         selected: [],
+        editedItem: {
+          uuid: null, 
+          name: '', 
+          startDate: new Date(), 
+          endDate: new Date(),
+          itinerarySteps: [
+            {
+              name: '', 
+              stepDate: new Date(),
+              routeStops: [
+                {
+                  currentCity: { 
+                    city: '', 
+                    country: '' 
+                  },
+                  nextCity: { 
+                    city: '', 
+                    country: '' 
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        selectedItinerary: null,
+        snackbar: {
+          show: false,
+          message: "",
+        },
         headers: [
           { text: '', value: 'select', sortable: false },
           { text: "Uuid", value: "uuid" },
@@ -148,12 +267,16 @@
           { text: "Next City", value: "nextCity" },
           { text: "Next Country", value: "nextCountry" },
         ],
+        filterField: null,
+        filterValue: '',
         sortBy: ['startDate'],
         sortDesc: [false],
         itemsPerPage: 10,
         page: 1,
         itemsPerPageOptions: [5, 10, 25, 50],
         showCreatePostDialog: false,
+        showDeleteDialog: false,
+        editDialog: false,
         newItem: {
           uuid: null, 
           name: '', 
@@ -198,13 +321,15 @@
     },
     computed: {
       filteredItineraries() {
-        if (!this.filterBy) {
+        if (!this.filterField || !this.filterValue) {
           return this.flattenedItineraries;
         }
-        return this.flattenedItineraries.filter(itinerary => 
-          itinerary.currentCountry === this.filterBy || itinerary.nextCountry === this.filterBy
-        );
-      }
+
+        return this.flattenedItineraries.filter((itinerary) => {
+          const fieldValue = itinerary[this.filterField];
+          return fieldValue && fieldValue.toString().toLowerCase().includes(this.filterValue.toLowerCase());
+        });
+      },
     },
     methods: {
       formatDate(date) {
@@ -242,10 +367,10 @@
             id:itinerary.uuid,
             uuid: itinerary.uuid,
             name: itinerary.name,
-            startDate: itinerary.startDate,
-            endDate: itinerary.endDate,
+            startDate: new Date(itinerary.startDate),
+            endDate: new Date(itinerary.endDate),
             itineraryStepName: step.name,
-            itineraryStepDate: step.stepDate,
+            itineraryStepDate: new Date(step.stepDate),
             currentCity: step.routeStops[0]?.currentCity.city || '',
             currentCountry: step.routeStops[0]?.currentCity.country || '',
             nextCity: step.routeStops[0]?.nextCity.city || '',
@@ -253,14 +378,50 @@
           }))
         );
       },
-      toggleSortOrder() {
-        this.sortDesc = !this.sortDesc;
+      populateEditForm() {
+        if (this.selectedItinerary == null) return;
+        console.log("Selected Itinerary:", this.selectedItinerary);
+        axios.get(`http://localhost:8000/api/mongodb/itinerary/${this.selectedItinerary}`)
+          .then((response) => {
+            console.log(response);
+            this.editedItem.name = response.data.name;
+            this.editedItem.startDate = new Date(response.data.startDate);
+            this.editedItem.endDate = new Date(response.data.endDate);
+            this.editedItem.itinerarySteps[0].name = response.data.itinerarySteps[0].name;
+            this.editedItem.itinerarySteps[0].stepDate = new Date(response.data.itinerarySteps[0].stepDate);
+            this.editedItem.itinerarySteps[0].routeStops[0].currentCity.country = response.data.itinerarySteps[0].routeStops[0].currentCity.country;
+            this.editedItem.itinerarySteps[0].routeStops[0].currentCity.city = response.data.itinerarySteps[0].routeStops[0].currentCity.city;
+            this.editedItem.itinerarySteps[0].routeStops[0].nextCity.country = response.data.itinerarySteps[0].routeStops[0].nextCity.country;
+            this.editedItem.itinerarySteps[0].routeStops[0].nextCity.city = response.data.itinerarySteps[0].routeStops[0].nextCity.city;
+          })
+          .catch(error => {
+            console.error("Error fetching itinerary:", error);
+          });
+        // const itinerary = this.itineraries.find(item => item.uuid === this.selectedItinerary);
+        // if (itinerary) {
+        //   this.editedItem = { ...itinerary }; // Clone to avoid mutation
+        // }
+      },
+      cancelEdit() {
+        this.editDialog = false;
+        this.selectedItinerary = null;
+        this.editedItem = null;
       },
       openCreateDialog() {
         this.createDialog = true;
       },
       closeCreateDialog() {
         this.createDialog = false;
+      },
+      openDeleteDialog() {
+      this.showDeleteDialog = true;
+      },
+      closeDeleteDialog() {
+        this.showDeleteDialog = false;
+      },
+      clearFilter() {
+        this.filterField = null;
+        this.filterValue = '';
       },
       onRowClick(item) {
       this.selected = [item.uuid]; // or [item.id] depending on your unique identifier
@@ -303,14 +464,38 @@
           console.error("Error fetching cities:", error);
         }
       },
-      async updateItem() {
-        const itemToUpdate = this.selected[0];
-        itemToUpdate.name = 'Updated Itinerary';
+      async fetchCitiesEdit(type) {
+        const country = type === 'currentCity' ? this.editedItem.itinerarySteps[0].routeStops[0].currentCity.country : this.editedItem.itinerarySteps[0].routeStops[0].nextCity.country;
+
+        if (!country) {
+          console.error("No country selected for", type);
+          return;
+        }
         try {
-          const response = await axios.put(`http://localhost:8000/api/mongodb/itinerary/${itemToUpdate.uuid}`, itemToUpdate);
+          const response = await axios.post('https://countriesnow.space/api/v0.1/countries/cities', { country });
+          if (type === 'currentCity') {
+            this.currentCityCities = response.data.data;
+          } else {
+            this.nextCityCities = response.data.data;
+          }
+        } catch (error) {
+          console.error("Error fetching cities:", error);
+        }
+      },
+      async saveEditedItem() {
+        const itemToUpdate = this.selectedItinerary;
+        console.log("Item to update:", itemToUpdate);
+        try {
+          const dto = await axios.get(`http://localhost:8000/api/mongodb/itinerary/${itemToUpdate}`);
+          console.log("DTO:", dto);
+          const response = await axios.patch(`http://localhost:8000/api/mongodb/itinerary/update`, dto.data);
           const index = this.itineraries.findIndex(itinerary => itinerary.uuid === itemToUpdate.uuid);
+          if (index !== -1) {
           this.itineraries.splice(index, 1, response.data);
+        }
           this.flattenItineraries();
+          this.snackbar.message = "Successfully updated itinerary.";
+          this.snackbar.show = true;
         } catch (error) {
           console.error("Error updating itinerary:", error);
         }
