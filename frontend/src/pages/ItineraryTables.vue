@@ -55,7 +55,7 @@
               variant="tonal"
               class="mr-3"
               @click="editDialog = !editDialog" 
-              :disabled="!selected.length">Update</v-btn>
+              >Update</v-btn>
             <v-btn
               color="red"
               variant="tonal"
@@ -485,7 +485,17 @@
         try {
           const dto = await axios.get(`http://localhost:8000/api/mongodb/itinerary/${itemToUpdate}`);
           console.log("DTO:", dto);
+          dto.data.name = this.editedItem.name;
+          dto.data.startDate = this.editedItem.startDate;
+          dto.data.endDate = this.editedItem.endDate;
+          dto.data.itinerarySteps[0].name = this.editedItem.itinerarySteps[0].name;
+          dto.data.itinerarySteps[0].stepDate = this.editedItem.itinerarySteps[0].stepDate;
+          dto.data.itinerarySteps[0].routeStops[0].currentCity.country = this.editedItem.itinerarySteps[0].routeStops[0].currentCity.country;
+          dto.data.itinerarySteps[0].routeStops[0].currentCity.city = this.editedItem.itinerarySteps[0].routeStops[0].currentCity.city;
+          dto.data.itinerarySteps[0].routeStops[0].nextCity.country = this.editedItem.itinerarySteps[0].routeStops[0].nextCity.country;
+          dto.data.itinerarySteps[0].routeStops[0].nextCity.city = this.editedItem.itinerarySteps[0].routeStops[0].nextCity.city;
           const response = await axios.patch(`http://localhost:8000/api/mongodb/itinerary/update`, dto.data);
+          this.itineraries = this.itineraries.map(itinerary => itinerary.uuid === itemToUpdate ? response.data : itinerary);
           const index = this.itineraries.findIndex(itinerary => itinerary.uuid === itemToUpdate.uuid);
           if (index !== -1) {
           this.itineraries.splice(index, 1, response.data);
