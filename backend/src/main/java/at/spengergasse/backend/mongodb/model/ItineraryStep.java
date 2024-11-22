@@ -6,13 +6,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "itinerary_steps")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItineraryStep

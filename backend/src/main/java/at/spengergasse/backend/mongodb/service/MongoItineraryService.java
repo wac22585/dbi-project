@@ -24,8 +24,9 @@ public class MongoItineraryService
 
         try {
             Itinerary save = ItineraryDto.toEntity(itinerary);
+            save.setUuid(UUID.randomUUID());
             itineraryRepository.save(save);
-            return Optional.of(itinerary);
+            return Optional.of(ItineraryDto.fromEntity(save));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -72,6 +73,25 @@ public class MongoItineraryService
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    // Update an itinerary
+    public Optional<ItineraryDto> updateItinerary(ItineraryDto itineraryDto)
+    {
+        if (itineraryDto == null) return Optional.empty();
+
+        try {
+            Itinerary itinerary = itineraryRepository.findByUuid(itineraryDto.uuid());
+            if (itinerary == null) return Optional.empty();
+
+            itinerary.setName(itineraryDto.name());
+            itinerary.setStartDate(itineraryDto.startDate());
+            itinerary.setEndDate(itineraryDto.endDate());
+            itineraryRepository.save(itinerary);
+            return Optional.of(ItineraryDto.fromEntity(itinerary));
+        } catch(Exception e) {
+            return Optional.empty();
         }
     }
 }

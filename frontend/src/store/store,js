@@ -1,0 +1,20 @@
+
+export default {
+  state: {
+    benchmarkResults: {},
+  },
+  getters: {
+    getBenchmarkResults: (state) => state.benchmarkResults,
+  },
+  mutations: {
+    setBenchmarkResults(state, results) {
+      state.benchmarkResults = results;
+    },
+  },
+  actions: {
+    fetchBenchmarkResults({ commit }) {
+      // Fetch results and commit to state
+      commit('setBenchmarkResults');
+    },
+  },
+};

@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-  import Benchmark from '@/components/Benchmark.vue'
+  import Benchmark from '@/pages/Benchmark.vue'
 </script>

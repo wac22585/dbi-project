@@ -7,12 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
 @RequestMapping(path = JpaUserController.USER_PATH)
 public class JpaUserController {
     public static final String USER_PATH = "api/relational/user";
     private final JpaUserService userService;
+
+    @GetMapping(value = "/all", produces = "application/json")
+    public ResponseEntity<List<UserDto>> fetchAllUsers() {
+        List<UserDto> users = userService.findAllUsers();
+        return ResponseEntity.ok(users);
+    }
 
     @PostMapping(value = "/add", produces = "application/json")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {

@@ -161,7 +161,7 @@ class JpaItineraryServiceTest
         var itineraries = itineraryService.getAllItineraries();
 
         assertThat(itineraries).isNotNull();
-        assertThat(itineraries.get(0).getName()).isEqualTo(itinerary.getName());
+        assertThat(itineraries.get(0).name()).isEqualTo(itinerary.getName());
     }
     
 

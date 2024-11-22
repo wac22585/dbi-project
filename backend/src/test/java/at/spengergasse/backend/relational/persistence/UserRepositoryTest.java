@@ -84,4 +84,22 @@ class UserRepositoryTest
 
         assertThat(userRepository.findById(user.getId()).get().getItineraries().size()).isEqualTo(1);
     }
+
+    @Test
+    void verifyUserWithoutPwd()
+    {
+        User user = this.user;
+        user = userRepository.save(user);
+
+        assertThat(userRepository.findUserByEmail(user.getEmail())).isInstanceOf(UserWithoutPwd.class);
+    }
+
+    @Test
+    void verifyUserWithItineraryNames()
+    {
+        User user = this.user;
+        user = userRepository.save(user);
+
+        assertThat(userRepository.findUserByUsername(user.getUsername())).isInstanceOf(UserWithItineraryNames.class);
+    }
 }

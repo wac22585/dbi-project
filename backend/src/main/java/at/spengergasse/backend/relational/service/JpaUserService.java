@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -125,4 +126,24 @@ public class JpaUserService
             return false;
         }
     }
+
+    public List<UserDto> findAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+//    public List<Object> findWithProjectionAndSorting(String fieldName, String value, String projectionField, String sortField, String sortDirection) {
+//        return userRepository.findAll((Specification<User>) (root, query, criteriaBuilder) -> {
+//            query.select(root.get(projectionField));
+//            Predicate predicate = criteriaBuilder.equal(root.get(fieldName), value);
+//            query.where(predicate);
+//            if ("asc".equalsIgnoreCase(sortDirection)) {
+//                query.orderBy(criteriaBuilder.asc(root.get(sortField)));
+//            } else {
+//                query.orderBy(criteriaBuilder.desc(root.get(sortField)));
+//            }
+//            return query.getRestriction();
+//        });
+//    }
 }

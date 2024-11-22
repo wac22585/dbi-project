@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Document(collection = "itineraries")
+
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
