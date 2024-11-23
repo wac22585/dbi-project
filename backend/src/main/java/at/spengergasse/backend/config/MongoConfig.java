@@ -10,17 +10,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
 @Configuration
 @EnableMongoRepositories(
         basePackages = {"at.spengergasse.backend.mongodb.persistenceRef", "at.spengergasse.backend.mongodb.persistence"}
 )
 public class MongoConfig {
 
+
     @Bean
     public MongoClient mongoClient() {
+        Properties prop = loadProperties();
+
         MongoClientSettings settings = MongoClientSettings.builder()
                 .uuidRepresentation(UuidRepresentation.STANDARD)
-                .applyConnectionString(new ConnectionString("mongodb+srv://clemil:emil@clemil0.wbzbs.mongodb.net/?retryWrites=true&w=majority"))
+                .applyConnectionString(new ConnectionString(prop.getProperty("URI")))
                 .build();
 
         return MongoClients.create(settings);
@@ -28,6 +35,21 @@ public class MongoConfig {
 
     @Bean
     public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-        return new MongoTemplate(mongoClient, "dbi");
+        Properties prop = loadProperties();
+
+        return new MongoTemplate(mongoClient, prop.getProperty("MONGO_DB"));
+    }
+
+    private Properties loadProperties() {
+        Properties prop = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("env.properties")) {
+            if (input == null) {
+                throw new IllegalStateException("Sorry, unable to find env.properties");
+            }
+            prop.load(input);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error reading properties file: " + e.getMessage(), e);
+        }
+        return prop;
     }
 }
